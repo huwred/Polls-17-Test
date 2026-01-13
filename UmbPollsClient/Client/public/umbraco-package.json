@@ -1,0 +1,14 @@
+{
+  "id": "UmbPollsClient",
+  "name": "UmbPollsClient",
+  "version": "0.0.0",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "name": "Umb Polls Client Bundle",
+      "alias": "UmbPollsClient.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/UmbPollsClient/umb-polls-client.js"
+    }
+  ]
+}
