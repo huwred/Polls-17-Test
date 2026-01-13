@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="umbraco\Data\Umbraco.sqlite.db" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\UmbPollsClient\UmbPollsClient.csproj" />
   </ItemGroup>
 
