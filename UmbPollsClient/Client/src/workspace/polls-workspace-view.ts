@@ -1,7 +1,8 @@
 ﻿import { UMB_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/workspace";
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { css, html, customElement, LitElement,state } from '@umbraco-cms/backoffice/external/lit';
+import { css, html, customElement, LitElement, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { POLLS_WORKSPACE_CONTEXT } from "./polls-workspace-context";
 
 @customElement('polls-workspace-view')
 export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
@@ -17,9 +18,13 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
         super();
         this.provideContext(UMB_WORKSPACE_CONTEXT, this);
 
-        console.log(this.getLastPathSegment(document.location.toString()));
-        this.pollid = this.getLastPathSegment(document.location.toString());
+        this.consumeContext(POLLS_WORKSPACE_CONTEXT, (context) => {
+            context?.pollId.subscribe((pollId) => {
+                this.pollid = pollId;
 
+                this.requestUpdate();
+            })
+        })
     }
     getEntityType(): string {
         return "polls-workspace-view";
@@ -100,18 +105,7 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
       }
     `,
     ];
-    private getLastPathSegment(urlString: string): string | null {
-    try {
-        const url = new URL(urlString); // Parse the URL
-        const pathname = url.pathname.replace(/\/+$/, ""); // Remove trailing slashes
-        const segments = pathname.split("/").filter(Boolean); // Remove empty segments
 
-        return segments.length > 0 ? segments[segments.length - 1] : null;
-    } catch (error) {
-        console.error("Invalid URL:", error);
-        return null;
-    }
-}
     private async fetchPoll(pollnum: number) {
         const headers: Headers = new Headers()
         headers.set('Content-Type', 'application/json')

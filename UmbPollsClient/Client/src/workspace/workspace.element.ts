@@ -11,7 +11,7 @@ export class PollsWorkspaceElement extends
         return html`
             <umb-workspace-editor 
                 headline="Polls Workspace"
-                alias="polls.workspace.root"
+                alias="polls.Workspace"
                 .enforceNoFooter=${true}>
 
             </umb-workspace-editor>

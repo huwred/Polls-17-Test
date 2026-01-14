@@ -1,8 +1,9 @@
-import { UMB_WORKSPACE_CONDITION_ALIAS } from "@umbraco-cms/backoffice/workspace";
+import { ManifestWorkspace, UMB_WORKSPACE_CONDITION_ALIAS } from "@umbraco-cms/backoffice/workspace";
 import {
     OUR_TREE_ITEM_ENTITY_TYPE,
     OUR_TREE_ROOT_ENTITY_TYPE,
 } from "./types.js";
+import PollsWorkspaceContext from "../workspace/polls-workspace-context.js";
 
 const repositoryManifest: UmbExtensionManifest = {
     type: "repository",
@@ -81,7 +82,7 @@ const sidebarAppManifest: UmbExtensionManifest = {
     ],
 };
 
-const workspace: UmbExtensionManifest = {
+/*const workspace: UmbExtensionManifest = {
     type: 'workspace',
     kind: 'routable',
     alias: 'polls.Workspace',
@@ -90,13 +91,25 @@ const workspace: UmbExtensionManifest = {
     meta: {
         entityType: OUR_TREE_ITEM_ENTITY_TYPE,
     },
-};
+};*/
+
+const workspace: ManifestWorkspace = {
+    type: 'workspace',
+    kind: 'routable',
+    alias: 'polls.Workspace',
+    name: 'Polls Workspace',
+    api: PollsWorkspaceContext,
+    meta: {
+        entityType: OUR_TREE_ITEM_ENTITY_TYPE,
+    },
+}
+
 const workspaceView: UmbExtensionManifest =
 {
     type: 'workspaceView',
     name: 'Polls Workspace View',
     alias: 'polls.workspaceView',
-    element: () => import('../workspace/polls-workspace-view.js'),
+    js: () => import('../workspace/polls-workspace-view.js'),
     weight: 900,
     meta: {
         label: 'Polls Workspace View',
