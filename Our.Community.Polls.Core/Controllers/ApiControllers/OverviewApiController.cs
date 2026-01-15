@@ -28,8 +28,17 @@ namespace Our.Community.Polls.Controllers.ApiControllers
 
             foreach (var question in questions)
             {
-                question.Answers = answers?.Where(answer => answer.QuestionId.Equals(question.Id));
+
+                var questionAnswers = answers?.Where(answer => answer.QuestionId.Equals(question.Id)).ToList();
                 question.Responses = responses.Where(response => response.QuestionId.Equals(question.Id));
+                question.ResponseCount = question.Responses.Count();
+                foreach (var answer in questionAnswers)
+                {
+                    var answerResponses = question.Responses.Where(item => item.AnswerId.Equals(answer.Id)).ToList();
+                    answer.Responses = answerResponses;
+                    answer.Percentage = answerResponses.Any() ? Math.Round((double)(answerResponses.Count) / question.Responses.Count() * 100) : 0;
+                }
+                question.Answers= questionAnswers;
             }
             if(id == null)
                 return questions;
