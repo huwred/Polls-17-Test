@@ -34,6 +34,12 @@
     <ProjectReference Include="..\Our.Community.Polls.Core\Our.Community.Polls.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Client\src\workspace\polls-responses-context.ts">
+      <SubType>Code</SubType>
+    </None>
+  </ItemGroup>
+
   <!-- Restore and build Client files -->
 	<!-- 
   <Target Name="RestoreClient" Inputs="Client\package.json;Client\package-lock.json" Outputs="Client\node_modules\.package-lock.json">

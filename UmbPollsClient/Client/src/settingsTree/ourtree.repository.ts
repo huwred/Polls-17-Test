@@ -24,7 +24,7 @@ export class OurTreeRepository
       name: "Polls Root",
       icon: "icon-star",
       hasChildren: true,
-      isFolder: true,
+      isFolder: false,
     };
 
     return { data };

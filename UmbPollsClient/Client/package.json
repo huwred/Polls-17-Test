@@ -14,6 +14,7 @@
     "@umbraco-cms/backoffice": "^*",
     "chalk": "^5.4.1",
     "cross-env": "^7.0.3",
+    "eslint": "^9.39.2",
     "node-fetch": "^3.3.2",
     "typescript": "^5.8.3",
     "vite": "^6.3.4"

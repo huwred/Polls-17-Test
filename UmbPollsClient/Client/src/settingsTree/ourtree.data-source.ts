@@ -24,17 +24,20 @@ export class OurTreeDataSource extends UmbTreeServerDataSourceBase<any, any> {
 }
 
 const getAncestorsOf = async (args: UmbTreeAncestorsOfRequestArgs) => {
+    console.log("Getting ancestors for:", args.treeItem.unique);
     return await UmbPollsClientService.getAncestors({
     query: { id: args.treeItem.unique },
   });
 };
 
-const getRootItems = async (args: UmbTreeRootItemsRequestArgs) =>
-    await UmbPollsClientService.getPolls({
-    query: { skip: args.skip, take: args.take },
-  });
-
+const getRootItems = async (args: UmbTreeRootItemsRequestArgs) => {
+    console.log("Getting root items with args:", args);
+    return await UmbPollsClientService.getPolls({
+        query: { skip: args.skip, take: args.take },
+    });
+};
 const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
+    console.log("Getting children for:", args.parent?.unique);
   if (args.parent?.unique === null) {
     return await getRootItems(args);
   } else {
@@ -45,6 +48,7 @@ const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
 };
 
 const mapper = (item: OurTreeItemResponseModel): OurTreeItemModel => {
+    console.log("Mapping item:", item);
   return {
     unique: item.id ?? "",
     parent: { unique: null, entityType: OUR_TREE_ROOT_ENTITY_TYPE },

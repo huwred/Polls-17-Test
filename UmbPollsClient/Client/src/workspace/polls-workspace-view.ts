@@ -7,7 +7,6 @@ import { POLLS_WORKSPACE_CONTEXT } from "./polls-workspace-context";
 @customElement('polls-workspace-view')
 export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
     @state()
-    //private _items: Array<string> = [];
     text?: string = '';
     pollid?: string | null = '';
     workspaceAlias: string = 'polls-workspace';
@@ -17,12 +16,11 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
     constructor() {
         super();
         this.provideContext(UMB_WORKSPACE_CONTEXT, this);
-
         this.consumeContext(POLLS_WORKSPACE_CONTEXT, (context) => {
             context?.pollId.subscribe((pollId) => {
                 this.pollid = pollId;
-
-                this.requestUpdate();
+                //removed requestUpdate from here to avoid multiple render
+                //this.requestUpdate();
             })
         })
     }
@@ -30,48 +28,63 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
         return "polls-workspace-view";
     }
     renderPollProps() {
+
         this.fetchPoll(Number(this.pollid)).then(data => {
-            let htmlData = `
-            <uui-box headline="Question"><uui-form-layout-item>
-            <uui-label for="Question_${data.id}" slot="label" required>Question</uui-label>
-                <uui-input id="Question_${data.id}" name="Name" type="text" label="Question" required="" pristine="" value="${data.name}"></uui-input>
-                <uui-input id="qid" name="Id" type="number" label="Id" pristine="" value="${data.id}" style="display:none;"></uui-input>
-            </uui-form-layout-item>
-            <uui-form-layout-item>
-            <uui-label slot="label">Answers</uui-label>
-            </uui-form-layout-item>`;
-
             let counter = 0;
+            let htmlData = `
+            <uui-box headline="Question">
+                <uui-form-layout-item>
+                    <uui-input style="--auto-width-text-margin-right: 50px" id="Question_${data.id}" name="Name" type="text" label="Question" required="" pristine="" value="${data.name}"></uui-input>
+                    <uui-input id="qid" name="Id" type="number" label="Id" pristine="" value="${data.id}" style="display:none;"></uui-input>
+                </uui-form-layout-item></uui-box>
+                <uui-box headline="Answers">
+                <div slot="header-actions">Add</div>`;
 
-            data.answers.forEach(() => {
-
+            if (data.answers.length === 0) {
                 htmlData += `
-                            <uui-form-layout-item>
-                              <uui-input id="${data.answers[counter].id}" name="Answers" type="text" label="Answer"  pristine="" value="${data.answers[counter].value}" >
-                                    <div slot="append" style=" padding-left:var(--uui-size-2, 6px)">
-                                    <uui-icon-registry-essential>
-                                        <uui-icon name="delete"></uui-icon>
-                                    </uui-icon-registry-essential>
-                                    </div>
-                              </uui-input>
-                              <uui-input id="sort_${data.answers[counter].id}" name="answerssort" type="text" label="Id" pristine="" value="${data.answers[counter].index}" style="display:none;"></uui-input>
-                              <uui-input id="id_${data.answers[counter].id}" name="answersid" type="text" label="Id" pristine="" value="${data.answers[counter].id}" style="display:none;"></uui-input>
-                            </uui-form-layout-item>`;
+                <uui-form-layout-item>
+                    <uui-label slot="label" required>No Answers defined</uui-label>
+                </uui-form-layout-item>`;
+            }
+            data.answers.forEach(() => {
+                htmlData += `
+                    <uui-form-layout-item>
+                        <uui-input pristine="" title="Sort Order" type="number" label="label" step="1" value="${data.answers[counter].index}" min="0" max="10"></uui-input>
+                        <uui-input id="${data.answers[counter].id}" name="Answers" type="text" label="Answer"  pristine="" value="${data.answers[counter].value}" >
+                            <div slot="append" style=" padding-left:var(--uui-size-2, 6px)">
+                            <uui-icon-registry-essential>
+                                <uui-icon name="delete"></uui-icon>
+                            </uui-icon-registry-essential>
+                            </div>
+                        </uui-input>
+                        <uui-input id="sort_${data.answers[counter].id}" name="answerssort" type="text" label="Id" pristine="" value="${data.answers[counter].index}" style="display:none;"></uui-input>
+                        <uui-input id="id_${data.answers[counter].id}" name="answersid" type="text" label="Id" pristine="" value="${data.answers[counter].id}" style="display:none;"></uui-input>
+                    </uui-form-layout-item>`;
                 counter++;
             })
 
             htmlData += `
-                            <uui-form-layout-item>
-                              <uui-label for="startdate" slot="label" >Start date</uui-label>
-                              <uui-input id="startdate" name="StartDate" type="date" label="startdate"  pristine="" value="${data.startDate}" ></uui-input>
-                            </uui-form-layout-item>
-                            <uui-form-layout-item>
-                              <uui-label for="enddate" slot="label" >End date</uui-label>
-                              <uui-input id="enddate" name="EndDate" type="date" label="enddate"  pristine="" value="${data.endDate}" ></uui-input>
-                            </uui-form-layout-item>
-                              <uui-input id="createddate" name="CreatedDate" style="display:none;" type="text" label="createddate"  pristine="" value="${data.createdDate}" ></uui-input>`;
+            <uui-button-inline-create label="Add Answer" title="Add Answer"></uui-button-inline-create>
+            <uui-form-layout-item>
+                <uui-label slot="label" >New Answer</uui-label>
+                <uui-input pristine="" title="Sort Order" type="number" label="label" step="1" value="10" min="0" max="10"></uui-input> <uui-input name="Answers" type="text" label="label"  pristine="" value="" placeholder="Add another Answer">
+                    <div slot="append" style=" padding-left:var(--uui-size-2, 6px)">
+                    <uui-icon-registry-essential>
+                        <uui-icon name="icon-badge-add" color="color-green" title="Add Answer"></uui-icon>
+                    </uui-icon-registry-essential>
+                    </div>
+                </uui-input>
+            </uui-form-layout-item>
+            </uui-box><uui-box headline="Poll Start + End dates">
+            <uui-form-layout-item>
+                <uui-input id="startdate" name="StartDate" type="date" label="startdate"  pristine="" value="${data.startDate}" ></uui-input>
+                <uui-input id="enddate" name="EndDate" type="date" label="enddate"  pristine="" value="${data.endDate}" ></uui-input>
+            </uui-form-layout-item>
+            <uui-input id="createddate" name="CreatedDate" style="display:none;" type="text" label="createddate"  pristine="" value="${data.createdDate}" ></uui-input>
+            </uui-box>`;
 
             this.text = htmlData;
+
         })
 
         const stringArray = [`${this.text}`] as any;
@@ -79,20 +92,27 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
         return html(stringArray as TemplateStringsArray);
     }
     override render() {
-        return html`<umb-body-layout header-transparent header-fit-height>
-                       <section id="settings-dashboard" class="uui-text">
-                            <uui-form><form id="MyForm" name="myForm" >
-                            ${this.renderPollProps()}
-                            <div class="actions">
-						        <uui-button
-							        label="save"
-							        color="positive"
-							        look="primary"
-							        type="submit"
-							        >Save</uui-button
-                            </div>
-                            </form></uui-form>
-                        </section></umb-body-layout>`;
+        console.log("render!");
+        return html`
+        <umb-body-layout header-transparent header-fit-height>
+            <section id="settings-dashboard" class="uui-text">
+                <uui-form>
+                <form id="MyForm" 
+                @submit="u=>{u.preventDefault();console.log("SUBMIT",u);const i=u.target;if(!i.checkValidity())return;const r=new FormData(i);for(const t of r.values())console.log(t);}"
+                name="myForm" >
+                ${this.renderPollProps()}
+                <div class="actions">
+					<uui-button
+						label="save"
+						color="positive"
+						look="primary"
+						type="submit"
+
+						>Save</uui-button
+                </div>
+                </form></uui-form>
+            </section>
+        </umb-body-layout>`;
 
     }
 
@@ -129,6 +149,11 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
             return Promise.reject(error)
         }
     }
+
+    /*#handleSave() {
+    //    alert("save");
+    //    return Promise.resolve();
+    //}*/
 }
 
 export default PollsWorkspaceView;

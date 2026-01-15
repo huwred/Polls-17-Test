@@ -10,7 +10,7 @@ export class PollsWorkspaceElement extends
     render() {
         return html`
             <umb-workspace-editor 
-                headline="Polls Workspace"
+                headline="MediaWiz Polls"
                 alias="polls.Workspace"
                 .enforceNoFooter=${true}>
 
