@@ -5,14 +5,14 @@ import {
   UmbTreeRootItemsRequestArgs,
   UmbTreeServerDataSourceBase,
 } from "@umbraco-cms/backoffice/tree";
-import { OurTreeItemResponseModel, UmbPollsClientService } from "../api";
+import { PollTreeItemResponseModel, UmbPollsClientService } from "../api";
 import {
-  OUR_TREE_ITEM_ENTITY_TYPE,
-  OUR_TREE_ROOT_ENTITY_TYPE,
-  OurTreeItemModel,
+  POLL_TREE_ITEM_ENTITY_TYPE,
+  POLL_TREE_ROOT_ENTITY_TYPE,
+  PollTreeItemModel,
 } from "./types";
 
-export class OurTreeDataSource extends UmbTreeServerDataSourceBase<any, any> {
+export class PollTreeDataSource extends UmbTreeServerDataSourceBase<any, any> {
   constructor(host: UmbControllerHost) {
     super(host, {
       getRootItems,
@@ -47,13 +47,13 @@ const getChildrenOf = async (args: UmbTreeChildrenOfRequestArgs) => {
   }
 };
 
-const mapper = (item: OurTreeItemResponseModel): OurTreeItemModel => {
+const mapper = (item: PollTreeItemResponseModel): PollTreeItemModel => {
     console.log("Mapping item:", item);
   return {
     unique: item.id ?? "",
-    parent: { unique: null, entityType: OUR_TREE_ROOT_ENTITY_TYPE },
+    parent: { unique: null, entityType: POLL_TREE_ROOT_ENTITY_TYPE },
     name: item.name ?? "unknown",
-    entityType: OUR_TREE_ITEM_ENTITY_TYPE,
+    entityType: POLL_TREE_ITEM_ENTITY_TYPE,
     hasChildren: false, //item.hasChildren,
     isFolder: false,
     icon: item.icon ?? "icon-bug",

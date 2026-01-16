@@ -10,24 +10,24 @@ namespace UmbPollsClient.Controllers.Tree;
 
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "UmbTreeClient")]
-public class OurTreeController : UmbTreeClientApiControllerBase
+public class PollsTreeController : UmbTreeClientApiControllerBase
 {
     private readonly IQuestions _questions;
-    public OurTreeController(IQuestions questions)
+    public PollsTreeController(IQuestions questions)
     {
         _questions = questions;
     }
 
     [HttpGet("root")]
-    [ProducesResponseType(typeof(PagedViewModel<OurTreeItemResponseModel>), StatusCodes.Status200OK)]
-    public ActionResult<PagedViewModel<OurTreeItemResponseModel>> GetPolls(CancellationToken token, int skip = 0, int take = 100, bool foldersOnly = false)
+    [ProducesResponseType(typeof(PagedViewModel<PollTreeItemResponseModel>), StatusCodes.Status200OK)]
+    public ActionResult<PagedViewModel<PollTreeItemResponseModel>> GetPolls(CancellationToken token, int skip = 0, int take = 100, bool foldersOnly = false)
     {
         var polls = _questions.Get();
 
-        var items = new List<OurTreeItemResponseModel>();
+        var items = new List<PollTreeItemResponseModel>();
         foreach (var item in polls) {
 
-            items.Add(new OurTreeItemResponseModel
+            items.Add(new PollTreeItemResponseModel
             {
                 Id = item.Id,
                 Name = item.Name,
@@ -36,7 +36,7 @@ public class OurTreeController : UmbTreeClientApiControllerBase
             });
         }
 
-        return Ok(new PagedViewModel<OurTreeItemResponseModel>
+        return Ok(new PagedViewModel<PollTreeItemResponseModel>
         {
             Items = items,
             Total = items.Count
@@ -44,15 +44,15 @@ public class OurTreeController : UmbTreeClientApiControllerBase
     }
 
     [HttpGet("Children")]
-    [ProducesResponseType(typeof(PagedViewModel<OurTreeItemResponseModel>), statusCode: StatusCodes.Status200OK)]
-    public ActionResult<PagedViewModel<OurTreeItemResponseModel>> GetChildren(string parent, int skip = 0, int take = 100)
+    [ProducesResponseType(typeof(PagedViewModel<PollTreeItemResponseModel>), statusCode: StatusCodes.Status200OK)]
+    public ActionResult<PagedViewModel<PollTreeItemResponseModel>> GetChildren(string parent, int skip = 0, int take = 100)
     {
         var poll = _questions.GetAnswers(Convert.ToInt32(parent));
 
-        var items = new List<OurTreeItemResponseModel>();
+        var items = new List<PollTreeItemResponseModel>();
         for (int n = 0; n < 5; n++)
         {
-            items.Add(new OurTreeItemResponseModel
+            items.Add(new PollTreeItemResponseModel
             {
                 Id = items[n].Id,
                 Name = $"Child Item {n + 1} of {parent}",
@@ -60,7 +60,7 @@ public class OurTreeController : UmbTreeClientApiControllerBase
                 HasChildren = false,
             });
         }
-        return Ok(new PagedViewModel<OurTreeItemResponseModel>
+        return Ok(new PagedViewModel<PollTreeItemResponseModel>
         {
             Items = items,
             Total = items.Count
@@ -68,13 +68,13 @@ public class OurTreeController : UmbTreeClientApiControllerBase
     }
 
     [HttpGet("Ancestors")]
-    [ProducesResponseType(typeof(IEnumerable<OurTreeItemResponseModel>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<OurTreeItemResponseModel>>> GetAncestors(string id)
-        => await Task.FromResult(Ok(Enumerable.Empty<OurTreeItemResponseModel>()));
+    [ProducesResponseType(typeof(IEnumerable<PollTreeItemResponseModel>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<PollTreeItemResponseModel>>> GetAncestors(string id)
+        => await Task.FromResult(Ok(Enumerable.Empty<PollTreeItemResponseModel>()));
 }
 
 
-public class  OurTreeItemResponseModel : NamedEntityTreeItemResponseModel
+public class  PollTreeItemResponseModel : NamedEntityTreeItemResponseModel
 {
     public new int Id { get; set; }
     public string Icon { get; set; } = "icon-bar-chart";

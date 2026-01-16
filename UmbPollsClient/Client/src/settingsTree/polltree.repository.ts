@@ -1,26 +1,26 @@
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbApi } from "@umbraco-cms/backoffice/extension-api";
 import { UmbTreeRepositoryBase } from "@umbraco-cms/backoffice/tree";
-import { OUR_TREE_STORE_CONTEXT } from "./ourtree.store";
+import { POLL_TREE_STORE_CONTEXT } from "./polltree.store";
 import {
-  OUR_TREE_ROOT_ENTITY_TYPE,
-  OurTreeItemModel,
-  OurTreeRootModel,
+  POLL_TREE_ROOT_ENTITY_TYPE,
+  PollTreeItemModel,
+  PollTreeRootModel,
 } from "./types";
-import { OurTreeDataSource } from "./ourtree.data-source";
+import { PollTreeDataSource } from "./polltree.data-source";
 
-export class OurTreeRepository
-  extends UmbTreeRepositoryBase<OurTreeItemModel, OurTreeRootModel>
+export class PollTreeRepository
+    extends UmbTreeRepositoryBase<PollTreeItemModel, PollTreeRootModel>
   implements UmbApi
 {
   constructor(host: UmbControllerHost) {
-    super(host, OurTreeDataSource, OUR_TREE_STORE_CONTEXT);
+      super(host, PollTreeDataSource, POLL_TREE_STORE_CONTEXT);
   }
 
   async requestTreeRoot() {
-    var data: OurTreeRootModel = {
+      var data: PollTreeRootModel = {
       unique: null,
-      entityType: OUR_TREE_ROOT_ENTITY_TYPE,
+      entityType: POLL_TREE_ROOT_ENTITY_TYPE,
       name: "Polls Root",
       icon: "icon-star",
       hasChildren: true,
@@ -31,4 +31,4 @@ export class OurTreeRepository
   }
 }
 
-export { OurTreeRepository as api };
+export { PollTreeRepository as api };

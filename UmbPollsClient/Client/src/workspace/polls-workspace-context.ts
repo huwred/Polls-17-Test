@@ -5,7 +5,7 @@ import {
     UmbWorkspaceContext,
     UmbWorkspaceRouteManager,
 } from "@umbraco-cms/backoffice/workspace";
-import { OUR_TREE_ITEM_ENTITY_TYPE } from "../settingsTree/types";
+import { POLL_TREE_ITEM_ENTITY_TYPE } from "../settingsTree/types";
 import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import PollsWorkspaceElement from "./workspace.element";
@@ -38,7 +38,7 @@ export default class PollsWorkspaceContext
     }
 
     getEntityType(): string {
-        return OUR_TREE_ITEM_ENTITY_TYPE;
+        return POLL_TREE_ITEM_ENTITY_TYPE;
     }
 }
 

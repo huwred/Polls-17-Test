@@ -3,6 +3,7 @@ import { UmbPropertyEditorUiElement } from "@umbraco-cms/backoffice/property-edi
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { POLL_MODAL_TOKEN } from "../modals/poll-modal.token.js";
 import { umbOpenModal } from "@umbraco-cms/backoffice/modal";
+import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
 
 type PollKeyValue = {
     key: string;
@@ -33,8 +34,7 @@ export class PollPicker extends UmbLitElement implements UmbPropertyEditorUiElem
         this.value = this._items;
         console.log("updated value");
         console.log(this.value)
-        this.dispatchEvent(new CustomEvent('change'));
-
+        this.dispatchEvent(new UmbChangeEvent()) 
     }  
     render() {
         return html`
@@ -51,7 +51,7 @@ export class PollPicker extends UmbLitElement implements UmbPropertyEditorUiElem
 
 
     /**
-     * Open Modal (Document Picker)
+     * Open Modal (Poll Picker)
      * @param id
      */
     async _openModal() {

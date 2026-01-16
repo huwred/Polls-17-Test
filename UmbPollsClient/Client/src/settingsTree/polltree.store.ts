@@ -2,14 +2,14 @@ import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
 import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbUniqueTreeStore } from "@umbraco-cms/backoffice/tree";
 
-export class OurTreeStore extends UmbUniqueTreeStore {
+export class PollTreeStore extends UmbUniqueTreeStore {
   constructor(host: UmbControllerHost) {
-    super(host, OUR_TREE_STORE_CONTEXT.toString());
+    super(host, POLL_TREE_STORE_CONTEXT.toString());
   }
 }
 
-export { OurTreeStore as api };
+export { PollTreeStore as api };
 
-export const OUR_TREE_STORE_CONTEXT = new UmbContextToken<OurTreeStore>(
-  "OUR_TREE_STORE_CONTEXT"
+export const POLL_TREE_STORE_CONTEXT = new UmbContextToken<PollTreeStore>(
+  "POLL_TREE_STORE_CONTEXT"
 );

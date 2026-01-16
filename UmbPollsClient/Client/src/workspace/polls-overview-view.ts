@@ -2,31 +2,26 @@
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, LitElement, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
-import { POLLS_WORKSPACE_CONTEXT } from "./polls-workspace-context";
+import { POLLS_RESPONSE_CONTEXT } from "./polls-responses-context";
 
-@customElement('polls-responses-view')
+@customElement('polls-overview')
 export class PollsResponseView extends UmbElementMixin(LitElement) {
     @state()
     text?: string = '';
     pollid?: string | null = '';
-    workspaceAlias: string = 'polls-response';
+    workspaceAlias: string = 'polls-overview';
 
 
 
     constructor() {
         super();
         this.provideContext(UMB_WORKSPACE_CONTEXT, this);
-        this.consumeContext(POLLS_WORKSPACE_CONTEXT, (context) => {
-            context?.pollId.subscribe((pollId) => {
-                this.pollid = pollId;
-                //removed requestUpdate from here to avoid multiple render
-                //this.requestUpdate();
-            });
-            console.log("id: " + this.pollid);
+        this.consumeContext(POLLS_RESPONSE_CONTEXT, () => {
+            this.requestUpdate();
         })
     }
     getEntityType(): string {
-        return "polls-responses-view";
+        return "polls-overview";
     }
 
     render() {
@@ -46,24 +41,23 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
             let htmlBody = ``
             for (var i = 0; i < counter; i++) {
                 let htmlHead = `<uui-box headline="${data[i].name}" >
-                            <uui-ref-list>`
+                    <uui-button slot="header-actions" look="placeholder" pristine="" href="/umbraco/section/settings/workspace/polls-workspace-view/edit/${data[i].id}" target="_self">Edit</uui-button>
+                        <uui-ref-list>`
                 let htmlData = ``
                 data[i].answers.forEach((element: any) => {
                     htmlData += `
-                    <uui-ref-node name="${element.value}">
-                    <uui-icon slot="icon" name="icon-bar-chart"></uui-icon>
-
-<uui-label class="progress-bar" role="progressbar" aria - valuenow="${element.percentage}" aria - valuemin="0" aria - valuemax="100">
-    <div class="progress" style="width:${element.percentage}%"><span class="progress-text">${element.percentage}%</span></div>
-</uui-label>
-<uui-label slot="detail">(responses ${element.responses.length})</uui-label>
+                    <uui-ref-node name="${element.value}" detail="(responses ${element.responses.length})">
+                        <uui-icon slot="icon" name="icon-bar-chart"></uui-icon>
+                        <uui-label class="progress-bar" role="progressbar" aria - valuenow="${element.percentage}" aria - valuemin="0" aria - valuemax="100">
+                            <div class="progress" style="width:${element.percentage}%"><span class="progress-text">${element.percentage}%</span></div>
+                        </uui-label>
                     </uui-ref-node>`
                 })
-                let htmlClose = `</uui-ref-list>
-            <span slot="header">
-
-                ${data[i].responseCount ?? 'Unknown'} responses
-            </span>                
+                let htmlClose = `
+                </uui-ref-list>
+                    <span slot="header">
+                        ${data[i].responseCount ?? 'Unknown'} responses
+                    </span>                
                 </uui-box>`
                 htmlBody += `${htmlHead}${htmlData}${htmlClose}`
             }
@@ -89,7 +83,7 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
       }
 .progress-bar {
     width: 60%;
-    max-width: 200px;
+    max-width: 300px;
     height: 20px;
     background-color: #f0f0f0;
     border-radius: 5px;
@@ -110,11 +104,10 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     ];
 
     private async fetchPolls() {
-        console.log(this.pollid);
         const headers: Headers = new Headers()
         headers.set('Content-Type', 'application/json')
         headers.set('Accept', 'application/json')
-        const response = await fetch('/get-overview/?id=' + this.pollid, {
+        const response = await fetch('/get-overview/', {
             method: 'GET',
             headers: headers
         })
@@ -139,6 +132,6 @@ export default PollsResponseView;
 
 declare global {
     interface HTMLElementTagNameMap {
-        'polls-responses-view': PollsResponseView;
+        'polls-overview': PollsResponseView;
     }
 }

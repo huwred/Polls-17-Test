@@ -1,29 +1,29 @@
-import { ManifestWorkspace, UMB_WORKSPACE_CONDITION_ALIAS } from "@umbraco-cms/backoffice/workspace";
+import { ManifestWorkspace, ManifestWorkspaceView, UMB_WORKSPACE_CONDITION_ALIAS } from "@umbraco-cms/backoffice/workspace";
 import {
-    OUR_TREE_ITEM_ENTITY_TYPE,
-    OUR_TREE_ROOT_ENTITY_TYPE,
+    POLL_TREE_ITEM_ENTITY_TYPE,
+    POLL_TREE_ROOT_ENTITY_TYPE,
 } from "./types.js";
 import PollsWorkspaceContext from "../workspace/polls-workspace-context.js";
 import PollsResponsesContext from "../workspace/polls-responses-context.js";
 
 const repositoryManifest: UmbExtensionManifest = {
     type: "repository",
-    alias: "Our.Tree.Repository",
+    alias: "Polls.Tree.Repository",
     name: "UmbRepositorySettings",
-    api: () => import("./ourtree.repository.js")
+    api: () => import("./polltree.repository.js")
 };
 
 const storeManifest: UmbExtensionManifest = {
     type: "treeStore",
-    alias: "Our.Tree.Store",
+    alias: "Polls.Tree.Store",
     name: "UmbTreeSettingsStore",
-    api: () => import("./ourtree.store.js")
+    api: () => import("./polltree.store.js")
 };
 
 const treeManifest: UmbExtensionManifest = {
     type: "tree",
     kind: "default",
-    alias: "Our.Tree.Tree",
+    alias: "Polls.Tree.Tree",
     name: "UmbTreeSettings",
     meta: {
         repositoryAlias: repositoryManifest.alias,
@@ -33,32 +33,32 @@ const treeManifest: UmbExtensionManifest = {
 const treeItem = {
     type: "treeItem",
     kind: "default",
-    alias: "Our.Tree.Item",
+    alias: "Polls.Tree.Item",
     name: "UmbTreeSettingsItem",
-    forEntityTypes: [OUR_TREE_ROOT_ENTITY_TYPE, OUR_TREE_ITEM_ENTITY_TYPE]
+    forEntityTypes: [POLL_TREE_ROOT_ENTITY_TYPE, POLL_TREE_ITEM_ENTITY_TYPE]
 };
 
 const menuManifest: UmbExtensionManifest = {
     type: "menu",
-    alias: "Our.Tree.Menu",
+    alias: "Polls.Tree.Menu",
     name: "Polls Menu",
     meta: {
         label: "Polls!!",
         icon: "icon-bar-chart",
-        entityType: OUR_TREE_ITEM_ENTITY_TYPE,
+        entityType: POLL_TREE_ITEM_ENTITY_TYPE,
     }
 };
 
 const menuitemManifest: UmbExtensionManifest = {
     type: "menuItem",
     kind: "tree",
-    alias: "Our.Tree.MenuItem",
+    alias: "Polls.Tree.MenuItem",
     name: "Polls Menu Item",
     weight: 100,
     meta: {
         label: "Polls Item",
         icon: "icon-bug",
-        entityType: OUR_TREE_ITEM_ENTITY_TYPE,
+        entityType: POLL_TREE_ITEM_ENTITY_TYPE,
         menus: [menuManifest.alias],
         treeAlias: treeManifest.alias,
         hideTreeRoot: false,
@@ -68,7 +68,7 @@ const menuitemManifest: UmbExtensionManifest = {
 const sidebarAppManifest: UmbExtensionManifest = {
     type: "sectionSidebarApp",
     kind: "menu",
-    alias: "Our.Tree.Sidebar",
+    alias: "Polls.Tree.Sidebar",
     name: "Polls Sidebar",
     weight: 300,
     meta: {
@@ -91,21 +91,21 @@ const workspace: ManifestWorkspace = {
     name: 'Polls Workspace',
     api: PollsWorkspaceContext,
     meta: {
-        entityType: OUR_TREE_ITEM_ENTITY_TYPE,
+        entityType: POLL_TREE_ITEM_ENTITY_TYPE,
     }
 }
 
-const workspaceView: UmbExtensionManifest =
+const workspaceView: ManifestWorkspaceView =
 {
     type: 'workspaceView',
-    name: 'Polls Workspace View',
-    alias: 'polls.workspaceView',
+    name: 'default View',
+    alias: 'polls.workspace',
     js: () => import('../workspace/polls-workspace-view.js'),
     weight: 900,
     meta: {
-        label: 'Polls Workspace View',
-        pathname: 'poll',
-        icon: 'icon-lab',
+        label: 'Content',
+        pathname: 'edit',
+        icon: 'icon-bar-chart',
     },
     conditions: [
         {
@@ -114,26 +114,34 @@ const workspaceView: UmbExtensionManifest =
         },
     ]
 };
-const responsesWorkspace: ManifestWorkspace =
-{
-    type: 'workspace',
-    kind: 'routable',
-    alias: 'polls.Response',
-    name: 'Polls Responses',
-    api: PollsResponsesContext,  
-    meta: {
-        entityType: OUR_TREE_ROOT_ENTITY_TYPE,
-    }
-};
-const responseView: UmbExtensionManifest =
+const overView: ManifestWorkspaceView =
 {
     type: 'workspaceView',
-    name: 'Polls Workspace View',
-    alias: 'polls.responses',
+    name: 'over View',
+    alias: 'polls.overview',
     js: () => import('../workspace/polls-responses-view.js'),
     weight: 900,
     meta: {
-        label: 'Polls Workspace View',
+        label: 'Responses',
+        pathname: 'overview',
+        icon: 'icon-chart',
+    },
+    conditions: [
+        {
+            alias: UMB_WORKSPACE_CONDITION_ALIAS,
+            match: workspace.alias,
+        },
+    ]
+};
+const responseView: ManifestWorkspaceView =
+{
+    type: 'workspaceView',
+    name: 'response View',
+    alias: 'polls.responses',
+    js: () => import('../workspace/polls-overview-view.js'),
+    weight: 100,
+    meta: {
+        label: 'Polls Overview',
         pathname: 'poll',
         icon: 'icon-lab',
     },
@@ -145,9 +153,22 @@ const responseView: UmbExtensionManifest =
     ]
 };
 
+const responsesWorkspace: ManifestWorkspace =
+{
+    type: 'workspace',
+    kind: 'routable',
+    alias: 'polls.Response',
+    name: 'Polls Responses',
+    api: PollsResponsesContext,  
+    meta: {
+        entityType: POLL_TREE_ROOT_ENTITY_TYPE,
+    }
+};
+
+
 const pollPicker: UmbExtensionManifest = {
     type: 'propertyEditorUi',
-    alias: 'MediaWiz.PollPicker',
+    alias: 'Umbraco.Community.Polls',
     name: 'Poll Picker Property Editor UI',
     js: () => import("../picker/poll-picker.js"),
     "elementName": "mediawiz-poll-picker",
@@ -179,5 +200,6 @@ export const manifests: Array<UmbExtensionManifest> = [
     responsesWorkspace,
     responseView,
     pollPicker,
-    pickerModalManifest
+    pickerModalManifest,
+    overView
 ];
