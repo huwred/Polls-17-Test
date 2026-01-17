@@ -3,6 +3,7 @@ import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, LitElement, state, repeat, query } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { POLLS_WORKSPACE_CONTEXT } from "./polls-workspace-context";
+import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
 
 @customElement('polls-workspace-view')
 export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
@@ -216,30 +217,36 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
     }
 
     async #handleDelete(u: { target: any }) {
+        umbConfirmModal(this, { headline: 'Delete Poll', content: 'Do you confirm?' })
+            .then(async () => {
+                const dataId = u.target?.dataset?.id;
+                const headers: Headers = new Headers()
+                headers.set('Content-Type', 'application/json')
+                headers.set('Accept', 'application/json')
+                const response = await fetch('/delete-question/' + dataId, {
+                    method: 'DELETE',
+                    headers: headers
+                })
 
-        const dataId = u.target?.dataset?.id;
-        const headers: Headers = new Headers()
-        headers.set('Content-Type', 'application/json')
-        headers.set('Accept', 'application/json')
-        const response = await fetch('/delete-question/' + dataId, {
-            method: 'DELETE',
-            headers: headers
-        })
-
-        const data = await response.json()
-        if (response.ok) {
-            const poll = data
-            if (poll) {
-                return Promise.resolve(poll);
-            } else {
-                return Promise.reject(new Error(`No polls found`))
-            }
-        } else {
-            // handle the errors
-            const error = 'unknown'
-            console.warn(`⚠️ Error ${response.status}:`, data.message || data);
-            return Promise.reject(error)
-        }
+                const data = await response.json()
+                if (response.ok) {
+                    const poll = data
+                    if (poll) {
+                        return Promise.resolve(poll);
+                    } else {
+                        return Promise.reject(new Error(`No polls found`))
+                    }
+                } else {
+                    // handle the errors
+                    const error = 'unknown'
+                    console.warn(`⚠️ Error ${response.status}:`, data.message || data);
+                    return Promise.reject(error)
+                }
+            })
+            .catch(() => {
+                console.log('oh no, they did not confirm!')
+                return Promise.resolve('cancel');
+            })
     }
 
     #deleteAnswer(u: { target: any }) {

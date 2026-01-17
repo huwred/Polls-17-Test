@@ -3,6 +3,7 @@ import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, LitElement, state, repeat } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { POLLS_RESPONSE_CONTEXT } from "./polls-responses-context";
+import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
 
 @customElement('polls-overview')
 export class PollsResponseView extends UmbElementMixin(LitElement) {
@@ -31,7 +32,13 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
             this._polls = data;
         });
         if (!this._polls) {
-            return html``;
+            return html`
+                <umb-body-layout header-transparent header-fit-height>
+                    <section id="settings-dashboard" class="uui-text">
+                    <uui-button label="Edit" look="placeholder" pristine="" href="/umbraco/section/settings/workspace/polls-workspace-view/edit/-1" target="_self">Create a Poll</uui-button>
+                    </section>
+                </umb-body-layout>
+            `;
         }
         return html`
         <umb-body-layout header-transparent header-fit-height>
@@ -127,30 +134,37 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     }
 
     async #handleDelete(u: { target: any }) {
+        umbConfirmModal(this, { headline: 'Delete Poll', content: 'Do you confirm?' })
+            .then(async () => {
+                const dataId = u.target?.dataset?.id;
+                const headers: Headers = new Headers()
+                headers.set('Content-Type', 'application/json')
+                headers.set('Accept', 'application/json')
+                const response = await fetch('/delete-question/' + dataId, {
+                    method: 'DELETE',
+                    headers: headers
+                })
 
-        const dataId = u.target?.dataset?.id;
-        const headers: Headers = new Headers()
-        headers.set('Content-Type', 'application/json')
-        headers.set('Accept', 'application/json')
-        const response = await fetch('/delete-question/' + dataId, {
-            method: 'DELETE',
-            headers: headers
-        })
+                const data = await response.json()
+                if (response.ok) {
+                    const poll = data
+                    if (poll) {
+                        return Promise.resolve(poll);
+                    } else {
+                        return Promise.reject(new Error(`No polls found`))
+                    }
+                } else {
+                    // handle the errors
+                    const error = 'unknown'
+                    console.warn(`⚠️ Error ${response.status}:`, data.message || data);
+                    return Promise.reject(error)
+                }
+            })
+            .catch(() => {
+                console.log('oh no, they did not confirm!')
+                return Promise.resolve('cancel');
+            })
 
-        const data = await response.json()
-        if (response.ok) {
-            const poll = data
-            if (poll) {
-                return Promise.resolve(poll);
-            } else {
-                return Promise.reject(new Error(`No polls found`))
-            }
-        } else {
-            // handle the errors
-            const error = 'unknown'
-            console.warn(`⚠️ Error ${response.status}:`, data.message || data);
-            return Promise.reject(error)
-        }
     }
 }
 

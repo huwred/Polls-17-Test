@@ -4,21 +4,21 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { POLL_MODAL_TOKEN } from "../modals/poll-modal.token.js";
 import { umbOpenModal } from "@umbraco-cms/backoffice/modal";
 import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
-
-type PollKeyValue = {
-    key: string;
-    value: string;
-};
+import { PollQuestion } from "../workspace/poll-question.js"
+//type PollKeyValue = {
+//    key: string;
+//    value: string;
+//};
 type ArrayOf<T> = T[];
 
 @customElement("mediawiz-poll-picker")
 export class PollPicker extends UmbLitElement implements UmbPropertyEditorUiElement {
 
     @property()
-    public value: ArrayOf<PollKeyValue> = [];
+    public value: ArrayOf<PollQuestion> = [];
 
     @state()
-    _items: ArrayOf<PollKeyValue> = [];
+    _items: ArrayOf<PollQuestion> = [];
 
 
     // do I need this?
@@ -39,7 +39,7 @@ export class PollPicker extends UmbLitElement implements UmbPropertyEditorUiElem
     render() {
         return html`
         <uui-ref-list>
-            <uui-ref-node name="${this.value == null ? "No Poll Selected" : this.value[0]?.value}">
+            <uui-ref-node name="${this.value == null ? "No Poll Selected" : this.value[0]?.name}">
             <uui-icon slot="icon" name="icon-bar-chart"></uui-icon>
             <uui-action-bar slot="actions"><uui-button label="delete"><uui-icon name="delete"></uui-icon></uui-button></uui-action-bar>
             </uui-ref-node>

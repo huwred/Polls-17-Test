@@ -3,6 +3,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
 import type { UmbModalContext } from '@umbraco-cms/backoffice/modal';
 import type { PollModalData, PollModalValue } from './poll-modal.token.js';
+import { PollQuestion } from "../workspace/poll-question.js"
 
 @customElement('poll-dialog')
 export class PollDialogElement
@@ -11,9 +12,8 @@ export class PollDialogElement
     @state()
     text?: string = '';
     @state()
-    _options: any[] = [];
-    @property()
-    preselected = '3';
+    _options: PollQuestion[] = [];
+
 
     @property({ attribute: false })
     modalContext?: UmbModalContext<PollModalData, PollModalValue>;
@@ -29,15 +29,19 @@ export class PollDialogElement
     private _fetchData = async () => {
         const response = await this.fetchPolls();
         this._options = [...response];
+
     };
     private _onChange(e: CustomEvent) {
+
         const controlValue = e.target as HTMLSelectElement;
-        let test = {
-            key: controlValue.value,
-            value: controlValue.innerText
-        };
-        this.modalContext?.updateValue({ poll: test });
-        console.log(controlValue.value);
+        // Find the selected poll by id
+        const selectedPoll = this._options.find((a: any) => a.id === Number(controlValue.value));
+
+        // Only update if a poll is found
+        if (selectedPoll) {
+            this.modalContext?.updateValue({ poll: selectedPoll });
+        }
+
     }
     private _handleCancel() {
         this.modalContext?.submit();
@@ -76,7 +80,7 @@ export class PollDialogElement
             <umb-body-layout headline="${this.modalContext?.data.headline ?? "Default headline"}" headline-variant="h5">
                 <uui-box headline="Polls">
                     <p>Select a Poll for this node.</p>
-                    <uui-combobox-list value=${this.preselected} >
+                    <uui-combobox-list >
                         ${this._options.map(
                             option =>
                                 html`<uui-combobox-list-option value="${option.id}" @click="${this._onChange}" 

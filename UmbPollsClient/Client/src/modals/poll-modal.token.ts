@@ -1,14 +1,12 @@
 ﻿import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
+import { PollQuestion } from "../workspace/poll-question.js"
 
 export type PollModalData = {
     headline: string;
 }
 
 export type PollModalValue = {
-    poll: {
-        key: string,
-        value: string
-    };
+    poll: PollQuestion;
 
 }
 
