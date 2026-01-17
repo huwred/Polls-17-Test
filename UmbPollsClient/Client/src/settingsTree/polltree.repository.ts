@@ -22,7 +22,7 @@ export class PollTreeRepository
       unique: null,
       entityType: POLL_TREE_ROOT_ENTITY_TYPE,
       name: "Polls Root",
-      icon: "icon-star",
+      icon: "icon-folder",
       hasChildren: true,
       isFolder: false,
     };
