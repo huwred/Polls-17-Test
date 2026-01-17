@@ -5,13 +5,13 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Compile Remove="Controllers\TreeControllers\**" />
-	  <EmbeddedResource Remove="Controllers\TreeControllers\**" />
-	  <None Remove="Controllers\TreeControllers\**" />
-	</ItemGroup>
-
+	
+	<PropertyGroup>
+		<PackageId>Our.Community.Polls.Core</PackageId>
+		<Product>Our.Community.Polls.Core</Product>
+		<Title>Our Community Polls.Core</Title>
+	</PropertyGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="Umbraco.Cms.Api.Management" Version="17.0.2" />
 		<PackageReference Include="Umbraco.Cms.Web.Website" Version="17.0.2" />
