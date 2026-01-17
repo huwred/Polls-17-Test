@@ -1,6 +1,6 @@
 ﻿import { UMB_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/workspace";
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { css, html, customElement, LitElement, state } from '@umbraco-cms/backoffice/external/lit';
+import { css, html, customElement, LitElement, state, repeat } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { POLLS_RESPONSE_CONTEXT } from "./polls-responses-context";
 
@@ -11,7 +11,8 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     pollid?: string | null = '';
     workspaceAlias: string = 'polls-overview';
 
-
+    @state()
+    private _polls: any;
 
     constructor() {
         super();
@@ -20,54 +21,51 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
             this.requestUpdate();
         })
     }
+
     getEntityType(): string {
         return "polls-overview";
     }
 
     render() {
+        this.fetchPolls().then(data => {
+            this._polls = data;
+        });
+        if (!this._polls) {
+            return html``;
+        }
         return html`
         <umb-body-layout header-transparent header-fit-height>
             <section id="settings-dashboard" class="uui-text">
-                ${this.renderPollResponses()} 
-               
+            ${repeat(this._polls, (item: any) => item.key, (item) =>
+                html`<uui-box headline="${item.name}" >
+                        <uui-action-bar slot="header-actions">
+                            <uui-button label="Edit" look="placeholder" pristine="" href="/umbraco/section/settings/workspace/polls-workspace-view/edit/${item.id}" target="_self"><uui-icon name="edit"></uui-icon></uui-button>
+                            <uui-button label="Delete"  look="placeholder" pristine="" @click="${(u: { preventDefault: () => void; target: any; }) => {
+                                u.preventDefault();
+                                this.#handleDelete(u);
+                                }}" ><uui-icon name="delete" data-id="${item.id}"></uui-icon>
+                            </uui-button>
+                        </uui-action-bar>
+                        <uui-ref-list>
+                            ${repeat(item.answers.sort((a: any, b: any) => Number(a.index) - Number(b.index)), (answer: any) => answer.key, (answer) =>
+                                html`
+                                    <uui-ref-node name="${answer.value}" detail="(responses ${answer.responses.length})">
+                                        <uui-icon slot="icon" name="icon-bar-chart"></uui-icon>
+                                        <uui-label class="progress-bar" role="progressbar" aria - valuenow="${answer.percentage}" aria - valuemin="0" aria - valuemax="100">
+                                            <div class="progress" style="width:${answer.percentage}%"><span class="progress-text">${answer.percentage}%</span></div>
+                                        </uui-label>
+                                    </uui-ref-node>`
+                            )}
+                        </uui-ref-list>
+                        <span slot="header">
+                            ${item.responseCount ?? 'Unknown'} responses
+                        </span>                
+                    </uui-box>
+                `)}
             </section>
-
         </umb-body-layout>`;
-
     }
-    renderPollResponses() {
-        this.fetchPolls().then(data => {
-            let counter = data.length
-            let htmlBody = ``
-            for (var i = 0; i < counter; i++) {
-                let htmlHead = `<uui-box headline="${data[i].name}" >
-                    <uui-button slot="header-actions" look="placeholder" pristine="" href="/umbraco/section/settings/workspace/polls-workspace-view/edit/${data[i].id}" target="_self">Edit</uui-button>
-                        <uui-ref-list>`
-                let htmlData = ``
-                data[i].answers.forEach((element: any) => {
-                    htmlData += `
-                    <uui-ref-node name="${element.value}" detail="(responses ${element.responses.length})">
-                        <uui-icon slot="icon" name="icon-bar-chart"></uui-icon>
-                        <uui-label class="progress-bar" role="progressbar" aria - valuenow="${element.percentage}" aria - valuemin="0" aria - valuemax="100">
-                            <div class="progress" style="width:${element.percentage}%"><span class="progress-text">${element.percentage}%</span></div>
-                        </uui-label>
-                    </uui-ref-node>`
-                })
-                let htmlClose = `
-                </uui-ref-list>
-                    <span slot="header">
-                        ${data[i].responseCount ?? 'Unknown'} responses
-                    </span>                
-                </uui-box>`
-                htmlBody += `${htmlHead}${htmlData}${htmlClose}`
-            }
-            this.text = `${htmlBody}`;
 
-        })
-        const stringArray = [`${this.text}`] as any;
-        stringArray.raw = [`${this.text}`];
-        return html(stringArray as TemplateStringsArray);
-    }
     static override styles = [
         UmbTextStyles,
         css`
@@ -123,6 +121,34 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
         } else {
             // handle the errors
             const error = 'unknown'
+            console.warn(`⚠️ Error ${response.status}:`, data.message || data);
+            return Promise.reject(error)
+        }
+    }
+
+    async #handleDelete(u: { target: any }) {
+
+        const dataId = u.target?.dataset?.id;
+        const headers: Headers = new Headers()
+        headers.set('Content-Type', 'application/json')
+        headers.set('Accept', 'application/json')
+        const response = await fetch('/delete-question/' + dataId, {
+            method: 'DELETE',
+            headers: headers
+        })
+
+        const data = await response.json()
+        if (response.ok) {
+            const poll = data
+            if (poll) {
+                return Promise.resolve(poll);
+            } else {
+                return Promise.reject(new Error(`No polls found`))
+            }
+        } else {
+            // handle the errors
+            const error = 'unknown'
+            console.warn(`⚠️ Error ${response.status}:`, data.message || data);
             return Promise.reject(error)
         }
     }
