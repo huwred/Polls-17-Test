@@ -15,5 +15,6 @@
         /// Property editor alias.
         /// </summary>
         public const string PropertyEditorAlias = "Umbraco.Community.Polls";
+
     }
 }
