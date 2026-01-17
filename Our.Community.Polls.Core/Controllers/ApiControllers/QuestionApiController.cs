@@ -1,22 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
-using System.Web;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Ocsp;
 using Our.Community.Polls.Core.Converters;
 using Our.Community.Polls.Models;
 using Our.Community.Polls.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using System.Web;
 using Umbraco.Cms.Web.Common.Controllers;
+using static Our.Community.Polls.PollConstants.TableConstants;
 
 namespace Our.Community.Polls.Controllers.ApiControllers
 {
+    public class PollPostDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
 
+        // Repeated form keys: Answers, answerssort, answersid
+        public List<string> Answers { get; set; } = new();
+        public List<int> AnswersSort { get; set; } = new();
+        public List<int> AnswersId { get; set; } = new();
+
+        // HTML input type="date" posts yyyy-MM-dd
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
+    }
     [ApiController]
     public class QuestionApiController : ControllerBase 
     {
@@ -42,13 +58,54 @@ namespace Our.Community.Polls.Controllers.ApiControllers
         [Route("get-question/{id}")]
         public Question GetById(int id)
         {
+            if(id == -1)
+            {
+                var question = new Question();
+                question.Answers = new List<Answer>();
+                question.Responses = new List<Response>();
+                return question;
+
+            }
             var result = _questions.GetById(id);
 
             return result;
         }
-
         [HttpPost]
         [Route("post-question")]
+        public async Task<Question?> PostAsync([FromForm] PollPostDto form)
+        {
+            if (string.IsNullOrWhiteSpace(form.Name))
+                return null;
+
+            var poll = new Question
+            {
+                Id = form.Id,
+                Name = form.Name!.Trim(),
+                StartDate = form.StartDate,
+                EndDate = form.EndDate,
+                CreatedDate = form.CreatedDate,
+            };
+
+            var answersList = new List<Answer>(); // Cast to List<Answer> for Add()
+
+            for (var i = 0; i < form.Answers.Count; i++)
+            {
+                var value = form.Answers[i];
+                if (string.IsNullOrWhiteSpace(value)) continue;
+
+                answersList.Add(new Answer
+                {
+                    Id = form.AnswersId[i],
+                    Index = form.AnswersSort[i],
+                    Value = value.Trim(),
+                    QuestionId = poll.Id
+                });
+            }
+            poll.Answers = answersList;
+            return _questions.Save(poll);
+        }
+        [HttpPost]
+        [Route("post-question-old")]
         public async Task<Question?> PostAsync()
         {
             JsonSerializerOptions options = new JsonSerializerOptions();
@@ -67,22 +124,32 @@ namespace Our.Community.Polls.Controllers.ApiControllers
 
         [HttpDelete]
         [Route("delete-question/{id}")]
-        public bool Delete(int id)
+        public IActionResult Delete(int id)
         {
             try
             {
                 if (_questions.Delete(id))
                 {
-                    return true;
+                    var response = new
+                    {
+                        Status = "Success",
+                        Message = "Data retrieved successfully",
+                        Timestamp = DateTime.UtcNow
+                    };
+                    return Ok(true);
                 }
             }
             catch (Exception e)
             {
                 _logger.LogError(e,"Unable to delete question");
-                throw;
             }
 
-            return false;
+            return NotFound(new
+            {
+                Status = "Error",
+                Message = $"Item with ID {id} was not found.",
+                Timestamp = DateTime.UtcNow
+            });
         }
 
         [HttpGet]
