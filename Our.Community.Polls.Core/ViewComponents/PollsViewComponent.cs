@@ -14,10 +14,13 @@ namespace Our.Community.Polls.ViewComponents
         }
         public async Task<IViewComponentResult> InvokeAsync(Question? Model,string? Template)
         {
-
-            if (Template != null)
+            if (Model != null)
             {
-                return await Task.FromResult((IViewComponentResult)View(Template,Model));
+                Model = _pollservice.GetQuestion(Model.Id);
+            }
+            if (Template != null && Model != null)
+            {
+                return await Task.FromResult((IViewComponentResult)View(Template, Model));
             }
             return await Task.FromResult((IViewComponentResult)View(Model));
         }

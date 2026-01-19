@@ -71,6 +71,13 @@ namespace Our.Community.Polls.Controllers.ApiControllers
             return result;
         }
         [HttpPost]
+        [Route("post-question-form")]
+        public async Task<Question?> PostAsync([FromForm] FormCollection form)
+        {
+            var test = form;
+            return null;
+        }
+        [HttpPost]
         [Route("post-question")]
         public async Task<Question?> PostAsync([FromForm] PollPostDto form)
         {
@@ -151,7 +158,35 @@ namespace Our.Community.Polls.Controllers.ApiControllers
                 Timestamp = DateTime.UtcNow
             });
         }
+        [HttpDelete]
+        [Route("delete-responses/{id}")]
+        public IActionResult DeleteResponse(int id)
+        {
+            try
+            {
+                if (_questions.DeleteResponses(id))
+                {
+                    var response = new
+                    {
+                        Status = "Success",
+                        Message = "Responses delete successfully",
+                        Timestamp = DateTime.UtcNow
+                    };
+                    return Ok(true);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Unable to delete responses");
+            }
 
+            return NotFound(new
+            {
+                Status = "Error",
+                Message = $"Item with ID {id} was not found.",
+                Timestamp = DateTime.UtcNow
+            });
+        }
         [HttpGet]
         [Route("get-answers/{id}")]
         public IEnumerable<Answer> GetAnswers(int id)

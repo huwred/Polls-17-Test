@@ -151,6 +151,29 @@ namespace Our.Community.Polls.Repositories
 
             return response;
         }
+
+        public bool DeleteResponses(int id)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var result = 0;
+
+            using (var transaction = scope.Database.GetTransaction())
+            {
+                var responses = GetResponses(id);
+
+                foreach (var response in responses)
+                {
+                    if (!_responses.Delete(response.Id))
+                    {
+                        return false;// this.Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Can't delete question, Error removing the responses");
+                    }
+                }
+
+                transaction.Complete();
+            }
+
+            return result > 0;
+        }
     }
 
     public interface IQuestions
@@ -164,6 +187,6 @@ namespace Our.Community.Polls.Repositories
         Question GetById(int id);
 
         IEnumerable<Question> Get();
-
+        bool DeleteResponses(int id);
     }
 }
