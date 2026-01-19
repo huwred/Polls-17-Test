@@ -7,6 +7,7 @@ import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 import './sorter-item.js';
 
 export type ModelEntryType = {
+	sortid: string;
 	id: string;
 	name: string;
 	sort: number;
@@ -30,8 +31,11 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 		// Only set initial model
 		if (this._items !== undefined) return;
 		this._items = value;
-		this.#sorter.setModel(this._items);
-		this.#updateFormValue();
+		// Defer sorter initialization until elements are in the DOM
+		this.updateComplete.then(() => {
+			this.#sorter.setModel(this._items!);
+			this.#updateFormValue();
+		});
 	}
 
 	@query('#new-answer') newValueInp!: HTMLInputElement;
@@ -84,6 +88,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 	// Contribute fields to parent form
 	#updateFormValue() {
 		// Keep validity in sync
+		console.log(this._items);
 		this.#validate();
 
 		// Build a FormData payload with repeated keys
@@ -103,7 +108,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 
 	// Fallback: append our data to the FormData right before submission
 	#onFormData = (e: FormDataEvent) => {
-
+		console.log(this._items);
 		(this._items ?? []).forEach((item) => {
 			e.formData.append('Answers', item.name);
 			e.formData.append('answerssort', String(item.sort));
@@ -111,9 +116,19 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 		});
 	};
 
+	// Ensure sorter is initialized whenever items change after renders
+	protected override updated(changed: Map<string, unknown>) {
+		super.updated(changed);
+		if (changed.has('items')) {
+			// Elements exist now; refresh mapping
+			this.#sorter.setModel(this._items ?? []);
+		}
+	}
+
+	// Sorter: use stable ids for element and model
 	#sorter = new UmbSorterController<ModelEntryType, PollSorterItem>(this, {
-		getUniqueOfElement: (element) => element.name,
-		getUniqueOfModel: (modelEntry) => modelEntry.name,
+		getUniqueOfElement: (element) => element.getAttribute('sortid') ?? '', // read reflected attribute
+		getUniqueOfModel: (modelEntry) => String(modelEntry.sortid),            // ensure string
 		identifier: 'mediawiz-polls-sorters',
 		itemSelector: 'poll-sorter-item',
 		containerSelector: '.sorter-container',
@@ -126,22 +141,29 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 		},
 	});
 
+	// Remove by id (not name)
 	removeItem = (item: ModelEntryType) => {
-		this._items = this._items!.filter((r) => r.name !== item.name);
-		this.#sorter.setModel(this._items);
-		this.requestUpdate();
+		const oldValue = this._items;
+		this._items = this._items!.filter((r) => r.sortid !== item.sortid);
+		this.requestUpdate('items', oldValue);
+		// After render, refresh sorter mapping
+		this.updateComplete.then(() => this.#sorter.setModel(this._items!));
 		this.#updateFormValue();
 	};
 
+	// Add with a unique id; never use '0' duplicates
 	addItem() {
 		const newVal = this.newValueInp.value.trim();
 		if (!newVal) return;
 		const qId = this.questionId.value;
-		this._items?.push({ id: '0', name: newVal, sort: 9, question: Number(qId) });
-		this._items?.forEach((row, index) => (row.sort = index));
-		this.#sorter.setModel(this._items);
+		const newId = crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}_${Math.random()}`;
+		const oldValue = this._items;
+		this._items = [...(this._items ?? []), { sortid: newId, id: "0", name: newVal, sort: 9, question: Number(qId) }];
+		this._items.forEach((row, index) => (row.sort = index));
 		this.newValueInp.value = '';
-		this.requestUpdate();
+		this.requestUpdate('items', oldValue);
+		// Refresh sorter after DOM updates so elements exist
+		this.updateComplete.then(() => this.#sorter.setModel(this._items!));
 		this.#updateFormValue();
 	}
 
@@ -150,17 +172,33 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 			<div class="sorter-container">
 				${repeat(
 					this.items,
-					(item) => item.name,
+					(item) => item.id, // key by id
 					(item) => html`
-						<poll-sorter-item style="width: fit-content;" name=${item.name} id=${item.id} sort=${item.sort} question="${item.question}">
+						<poll-sorter-item style="width: fit-content;" sortid=${item.sortid} name=${item.name} id=${item.id} sort=${item.sort} question="${item.question}">
 							<uui-icon name="icon-grip" class="handle" aria-hidden="true"></uui-icon>
 
-							<uui-input slot="action" id="${'Answer' + item.id}" name="Answers" type="text" label="Answer" pristine="" value="${item.name}">
-								<div slot="append" style="padding-left:var(--uui-size-2, 6px)">
-									<uui-icon-registry-essential>
-										<uui-icon color="red" data-id="${item.name}" title="Remove Answer" name="delete" @click=${() => this.removeItem(item)}></uui-icon>
-									</uui-icon-registry-essential>
-								</div>
+							<uui-input
+							  slot="action"
+							  id="${'Answer' + item.id}"
+							  name="Answers"
+							  type="text"
+							  label="Answer"
+							  pristine=""
+							  .value=${item.name}
+							  @input=${(e: InputEvent) => {
+								const target = e.target as HTMLInputElement;
+								const oldValue = this._items;
+								// immutable update so Lit re-renders and keeps ids stable
+								this._items = this.items.map(i => i.id === item.id ? { ...i, name: target.value } : i);
+								this.requestUpdate('items', oldValue);
+								this.updateComplete.then(() => this.#sorter.setModel(this._items!));
+								this.#updateFormValue();
+							  }}>
+							  <div slot="append" style="padding-left:var(--uui-size-2, 6px)">
+								<uui-icon-registry-essential>
+									<uui-icon color="red" data-id="${item.id}" title="Remove Answer" name="delete" @click=${() => this.removeItem(item)}></uui-icon>
+								</uui-icon-registry-essential>
+							  </div>
 							</uui-input>
 						</poll-sorter-item>
 					`,
@@ -196,6 +234,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 				min-height: 20px;
 			}
 		`,
+
 	];
 }
 

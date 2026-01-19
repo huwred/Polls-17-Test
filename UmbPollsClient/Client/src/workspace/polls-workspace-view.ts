@@ -66,10 +66,10 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
             </uui-form-layout-item>
             `;
         }
-
         return html`
 			<uui-form-layout-item>
 				<polls-sorter-group .items=${(this._answers ?? []).map((a: any) => ({
+                    sortid: crypto.randomUUID(),
                     id: a.id,
                     sort: Number(a.index),
                     name: a.value,
@@ -253,6 +253,7 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
 
     async #handleSave(u: { target: any; }) {
         const i = u.target;
+
         if (!i.checkValidity()) return;
         const formData = new FormData(i);
 
