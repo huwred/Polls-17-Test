@@ -35,6 +35,9 @@ const treeItem = {
     kind: "default",
     alias: "Polls.Tree.Item",
     name: "UmbTreeSettingsItem",
+    meta: {
+        hideActions: false
+    },
     forEntityTypes: [POLL_TREE_ROOT_ENTITY_TYPE, POLL_TREE_ITEM_ENTITY_TYPE]
 };
 
@@ -130,7 +133,7 @@ const overView: ManifestWorkspaceView =
         {
             alias: UMB_WORKSPACE_CONDITION_ALIAS,
             match: workspace.alias,
-        },
+        }
     ]
 };
 const responseView: ManifestWorkspaceView =
@@ -201,5 +204,6 @@ export const manifests: Array<UmbExtensionManifest> = [
     responseView,
     pollPicker,
     pickerModalManifest,
-    overView
+    overView,
+
 ];

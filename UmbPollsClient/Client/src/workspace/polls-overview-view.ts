@@ -43,6 +43,9 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
         return html`
         <umb-body-layout header-transparent header-fit-height>
             <section id="settings-dashboard" class="uui-text">
+                <uui-button label="Edit" look="placeholder" pristine="" href="/umbraco/section/settings/workspace/polls-workspace-view/edit/-1" target="_self">Create a Poll</uui-button>
+            </section>
+            <section id="polls-dashboard" class="uui-text">
             ${repeat(this._polls, (item: any) => item.key, (item) =>
                 html`<uui-box headline="${item.name}" >
                         <uui-action-bar slot="header-actions">
@@ -80,10 +83,16 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
         display: block;
         padding: var(--uui-size-layout-1);
       }
-      #settings-dashboard{
+      #polls-dashboard{
         display: grid;
         grid-gap: var(--uui-size-7);
         grid-template-columns: repeat(2, 1fr);
+        padding: var(--uui-size-layout-1);
+      }
+            #settings-dashboard{
+        display: grid;
+        grid-gap: var(--uui-size-7);
+        grid-template-columns: repeat(1, 1fr);
         padding: var(--uui-size-layout-1);
       }
 .progress-bar {

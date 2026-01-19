@@ -53,8 +53,9 @@ const mapper = (item: PollTreeItemResponseModel): PollTreeItemModel => {
     unique: item.id ?? "",
     parent: { unique: null, entityType: POLL_TREE_ROOT_ENTITY_TYPE },
     name: item.name ?? "unknown",
-    entityType: POLL_TREE_ITEM_ENTITY_TYPE,
-    hasChildren: false, //item.hasChildren,
+      entityType: POLL_TREE_ITEM_ENTITY_TYPE,
+      hasChildren: false, //item.hasChildren,
+
     isFolder: false,
     icon: item.icon ?? "icon-bug",
   };

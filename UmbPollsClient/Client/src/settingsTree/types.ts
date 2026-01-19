@@ -1,6 +1,6 @@
 import {
   UmbTreeItemModel,
-  UmbTreeRootModel,
+    UmbTreeRootModel,
 } from "@umbraco-cms/backoffice/tree";
 
 export const POLL_TREE_ROOT_ENTITY_TYPE = "polls-workspace-root";

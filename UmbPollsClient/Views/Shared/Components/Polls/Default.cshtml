@@ -1,32 +1,34 @@
-﻿@model dynamic
+﻿@model Question
 @using Our.Community.Polls.Controllers
 @using Our.Community.Polls.Interfaces
 @using Our.Community.Polls.Models
 @using System.Globalization
 @using Umbraco.Cms.Web.Common
 @using Umbraco.Extensions
-@inject IPollService pollService
 @inject UmbracoHelper umbracoHelper
 @{
     var question = Model;
     bool allowVote = true;
     bool expired = false;
-    if (question.EndDate != null && DateTime.UtcNow > question.EndDate)
+    if (TempData["Question"] != null) // Check if user has just voted
     {
-        question = pollService.GetQuestion(question.Id);
-        expired = true;
+        question = (Question)TempData["Question"]!;
         allowVote = false;
     }
-    if (TempData["Question"] != null)
+    if (Context.Request.Cookies.ContainsKey("Poll_" + question.Id)) // Check if user has previously voted
     {
-        question = (Question)TempData["Question"];
+        allowVote = false;
+    }
+    if (question.EndDate.HasValue && DateTime.UtcNow > question.EndDate)
+    {
+        expired = true;
         allowVote = false;
     }
 }
 
 @if (question.StartDate != null && DateTime.UtcNow < question.StartDate)
 {
-    <label>@umbracoHelper.GetDictionaryValueOrDefault("VotingClosed", CultureInfo.CurrentCulture, "Voting Closed")</label>
+    <!-- Don't do anything, the Poll isn't active yet -->
 }
 else
 {
@@ -39,7 +41,7 @@ else
             @Html.Hidden("questionId", question.Id,null)
             <ul class="list-group list-group-flush">
 
-                @foreach (var answer in question.Answers)
+                @foreach (var answer in question.Answers.OrderBy(a=>a.Index))
                 {
                     <li class="list-group-item">
                         <div class="radio">
@@ -50,7 +52,7 @@ else
                                 }
                                 @umbracoHelper.GetDictionaryValueOrDefault(answer.Value, CultureInfo.CurrentCulture, answer.Value)
                             </label>
-                            @if (answer.Responses != null && !allowVote)
+                            @if (question.Responses != null && !allowVote)
                             {
                                 <div class="progress">
                                     <div class="progress-bar" role="progressbar" aria-label="Response percentages" style="width: @answer.Percentage%;" aria-valuenow="@answer.Percentage" aria-valuemin="0" aria-valuemax="100">@answer.Percentage%</div>

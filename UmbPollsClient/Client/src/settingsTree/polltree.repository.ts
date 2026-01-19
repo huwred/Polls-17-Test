@@ -23,8 +23,8 @@ export class PollTreeRepository
       entityType: POLL_TREE_ROOT_ENTITY_TYPE,
       name: "Polls Root",
       icon: "icon-folder",
-      hasChildren: true,
-      isFolder: false,
+          hasChildren: true,
+      isFolder: true,
     };
 
     return { data };

@@ -1,11 +1,13 @@
 ﻿import { UMB_WORKSPACE_CONTEXT } from "@umbraco-cms/backoffice/workspace";
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { css, html, customElement, LitElement, state, repeat, query } from '@umbraco-cms/backoffice/external/lit';
+import { css, html, customElement, LitElement, state, query } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { POLLS_WORKSPACE_CONTEXT } from "./polls-workspace-context";
 import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
+import '../sorter/sorter-group.js';
 
 @customElement('polls-workspace-view')
+
 export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
     @state()
     text?: string = '';
@@ -32,6 +34,7 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
             })
         })
     }
+
     getEntityType(): string {
         return "polls-workspace-view";
     }
@@ -65,38 +68,21 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
         }
 
         return html`
-            ${repeat(this._answers, (item: any) => item.key, (item, index) =>
-                html`
-                    <uui-form-layout-item>
-                        <uui-input id="sort_${index}" pristine="" name="answerssort" title="Sort Order" type="number" label="label" step="1" value="${item.index}" min="0" max="10"></uui-input>
-                        <uui-input id="${'Answer' + index}" name="Answers" type="text" label="Answer"  pristine="" value="${item.value}" >
-                            <div slot="append" style=" padding-left:var(--uui-size-2, 6px)">
-                            <uui-icon-registry-essential>
-                                <uui-icon color="red" data-id="${item.value}" title="Remove Answer" name="delete" @click="${(u: { preventDefault: () => void; target: any; }) => {
-                                    u.preventDefault();
-                                    this.#deleteAnswer(u);
-                                }}"></uui-icon>
-                            </uui-icon-registry-essential>
-                            </div>
-                        </uui-input>
-                        <uui-input id="id_${index}" name="answersid" type="text" label="Id" pristine="" value="${item.id}" style="display:none;"></uui-input>
-                    </uui-form-layout-item> `
-                )
-            }
+			<uui-form-layout-item>
+				<polls-sorter-group .items=${(this._answers ?? []).map((a: any) => ({
+                    id: a.id,
+                    sort: Number(a.index),
+                    name: a.value,
+                    question: a.questionId
+                })) }></polls-sorter-group>
+			</uui-form-layout-item>
             <uui-form-layout-item>
-                <uui-label slot="label">Add new Answer</uui-label>
-                <span slot="description">
-                    Form item accepts a sort order + description, keep it short.
-                </span>
-                <uui-input id="key-value-new-sort" pristine="" title="Sort Order" type="number" label="label" step="1" value="10" min="0" max="10"></uui-input>
-                <uui-input id="key-value-new-value" name="Answers" type="text" label="label"  pristine="" value="" placeholder="Add another Answer">
-                    <div slot="append"  >
-                        <uui-icon name="icon-badge-add" color="green" @click="${this.#addAnswer}"></uui-icon>
-                    </div>
-                </uui-input>
+            <hr>
             </uui-form-layout-item>
+
             `;
     }
+
     override render() {
 
        this.fetchPoll(Number(this.pollid)).then(data => {
@@ -141,26 +127,28 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
                     }}">
                     <uui-box headline="Question">
                         <div slot="header">
-                            <uui-input style="--auto-width-text-margin-right: 50px" id="Question_${this._poll.id}" name="Name" type="text" label="Question" required="" pristine="" value="${this._poll.name}"></uui-input>
+                            <uui-input style="--auto-width-text-margin-right: 50px;width:30em;" autowidth="" id="Question_${this._poll.id}" name="Name" type="text" label="Question" required="" pristine="" value="${this._poll.name}"></uui-input>
                         </div>
-                        <uui-button label="Delete" title="Delete Poll" slot="header-actions" look="placeholder" pristine=""
-                        @click="${(u: { preventDefault: () => void; target: any; }) => {
-                            u.preventDefault();
-                            this.#handleDelete(u);
-                        }}" 
-                        target="_self"><uui-icon name="delete" data-id="${this._poll.id}"></uui-icon></uui-button>
+                        <uui-action-bar slot="header-actions">
+                            <uui-button label="Delete"  look="placeholder" pristine="" @click="${(u: { preventDefault: () => void; target: any; }) => {
+                                u.preventDefault();
+                                this.#handleDelete(u);
+                            }}" ><uui-icon name="delete" data-id="${this._poll.id}"></uui-icon>
+                            </uui-button>
+                        </uui-action-bar>
+
                         <uui-input id="qid" name="Id" type="number" label="Id" pristine="" value="${this._poll.id}" style="display:none;"></uui-input>
                         <uui-label>Answers</uui-label>
 
-                        ${this.renderPollAnswers()}
+                        ${this.renderPollAnswers() }
                         <uui-form-layout-item>
                             <span slot="description">
                                 Add Start and/or End date to control when a poll is displayed.
                             </span><uui-label>Poll Start + End dates</uui-label>            
                         </uui-form-layout-item>
                         <uui-form-layout-item>
-                            <uui-input id="startdate" name="StartDate" type="date" label="startdate"  pristine="" value="${this._poll.startDate}" ></uui-input>
-                            <uui-input id="enddate" name="EndDate" type="date" label="enddate"  pristine="" value="${this._poll.endDate}" ></uui-input>
+                            <uui-input id="startdate" name="StartDate" type="datetime-local" label="startdate"  pristine="" value="${this._poll.startDate}" ></uui-input>
+                            <uui-input id="enddate" name="EndDate" type="datetime-local" label="enddate"  pristine="" value="${this._poll.endDate}" ></uui-input>
                         </uui-form-layout-item>
                         <uui-input id="createddate" name="CreatedDate" style="display:none;" type="text" label="createddate"  pristine="" value="${this._poll.createdDate}" ></uui-input>
                         <div class="actions">
@@ -247,16 +235,6 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
                 console.log('oh no, they did not confirm!')
                 return Promise.resolve('cancel');
             })
-    }
-
-    #deleteAnswer(u: { target: any }) {
-        const dataId = u.target?.dataset?.id;
-        if (!dataId || !Array.isArray(this._answers)) return;
-
-        const answer = dataId;
-        this._answers = this._answers.filter((a: any) => a.value !== answer);
-        // Ensure array is sorted by numeric index (ascending)
-        this._answers.sort((a: any, b: any) => Number(a.index) - Number(b.index));
     }
 
     #addAnswer() {
