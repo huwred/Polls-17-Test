@@ -141,7 +141,6 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 		},
 	});
 
-	// Remove by id (not name)
 	removeItem = (item: ModelEntryType) => {
 		const oldValue = this._items;
 		this._items = this._items!.filter((r) => r.sortid !== item.sortid);
@@ -151,7 +150,6 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 		this.#updateFormValue();
 	};
 
-	// Add with a unique id; never use '0' duplicates
 	addItem() {
 		const newVal = this.newValueInp.value.trim();
 		if (!newVal) return;
@@ -179,7 +177,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 
 							<uui-input
 							  slot="action"
-							  id="${'Answer' + item.id}"
+							  id="${item.sortid}"
 							  name="Answers"
 							  type="text"
 							  label="Answer"
@@ -189,14 +187,14 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 								const target = e.target as HTMLInputElement;
 								const oldValue = this._items;
 								// immutable update so Lit re-renders and keeps ids stable
-								this._items = this.items.map(i => i.id === item.id ? { ...i, name: target.value } : i);
+								this._items = this.items.map(i => i.sortid === item.sortid ? { ...i, name: target.value } : i);
 								this.requestUpdate('items', oldValue);
 								this.updateComplete.then(() => this.#sorter.setModel(this._items!));
 								this.#updateFormValue();
 							  }}>
 							  <div slot="append" style="padding-left:var(--uui-size-2, 6px)">
 								<uui-icon-registry-essential>
-									<uui-icon color="red" data-id="${item.id}" title="Remove Answer" name="delete" @click=${() => this.removeItem(item)}></uui-icon>
+									<uui-icon color="red" data-id="${item.sortid}" title="Remove Answer" name="delete" @click=${() => this.removeItem(item)}></uui-icon>
 								</uui-icon-registry-essential>
 							  </div>
 							</uui-input>
