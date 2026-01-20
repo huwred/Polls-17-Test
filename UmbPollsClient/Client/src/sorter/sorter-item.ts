@@ -23,7 +23,6 @@ export class PollSorterItem extends UmbElementMixin(LitElement) {
 			<div>
 			<slot></slot>
 			<slot name="action"></slot>
-            <uui-input style="display:none;" id="${'Answer' + this.id}" name="Answers" type="text" label="Answer"  pristine="" value="${this.name}" ></uui-input>
 			<uui-input style="display:none;" id="sort_${this.id}" pristine="" name="answerssort" type="number" label="label" value="${this.sort}" min="0" max="100" ></uui-input>
             <uui-input style="display:none;" id="id_${this.id}" name="answersid" type="text" label="Id" pristine="" value="${this.id}" ></uui-input>
             <uui-input style="display:none;" id="question_${this.id}" name="questionid" type="text" label="QuestionId" pristine="" value="${this.question}" ></uui-input>
@@ -60,12 +59,12 @@ export class PollSorterItem extends UmbElementMixin(LitElement) {
 			}
 			::slotted([slot="action"]) {
 			  padding-left: .3rem;
-			  cursor: hand;
+			  cursor: pointer;
 			  --uui-icon-color:red;
 			}
 			slot:not([name]) {
 				padding:.3rem;
-				cursor: move;
+				cursor: grab;
 			}
 		`,
 	];

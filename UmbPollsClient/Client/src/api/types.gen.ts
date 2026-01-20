@@ -7,6 +7,7 @@ export type PollTreeItemResponseModel = {
     parent?: ReferenceByIdModel | null;
     name: string;
     icon: string;
+    entityType: string;
 };
 
 export type PagedOurTreeItemResponseModel = {

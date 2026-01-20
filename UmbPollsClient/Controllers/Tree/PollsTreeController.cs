@@ -9,8 +9,8 @@ using Umbraco.Cms.Api.Management.ViewModels.Tree;
 namespace UmbPollsClient.Controllers.Tree;
 
 [ApiVersion("1.0")]
-[ApiExplorerSettings(GroupName = "UmbTreeClient")]
-public class PollsTreeController : UmbTreeClientApiControllerBase
+[ApiExplorerSettings(GroupName = "UmbPollsClient")]
+public class PollsTreeController : UmbPollsClientApiControllerBase
 {
     private readonly IQuestions _questions;
     public PollsTreeController(IQuestions questions)
@@ -33,6 +33,7 @@ public class PollsTreeController : UmbTreeClientApiControllerBase
                 Name = item.Name,
                 Icon = "icon-bar-chart",
                 HasChildren = false,
+                entityType = "Our.Community.Polls.Models.Question"
             });
         }
 
@@ -78,4 +79,5 @@ public class  PollTreeItemResponseModel : NamedEntityTreeItemResponseModel
 {
     public new int Id { get; set; }
     public string Icon { get; set; } = "icon-bar-chart";
+    public string? entityType { get; internal set; }
 }

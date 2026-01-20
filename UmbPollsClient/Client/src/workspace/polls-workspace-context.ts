@@ -30,7 +30,6 @@ export default class PollsWorkspaceContext
                 path: "edit/:unique",
                 component: PollsWorkspaceElement,
                 setup: (_component, info) => {
-                    console.log(info.match.params.unique);
                     this.#pollId.setValue(info.match.params.unique);
                 },
             },

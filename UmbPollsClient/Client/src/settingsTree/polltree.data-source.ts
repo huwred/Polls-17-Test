@@ -7,8 +7,8 @@ import {
 } from "@umbraco-cms/backoffice/tree";
 import { PollTreeItemResponseModel, UmbPollsClientService } from "../api";
 import {
-  POLL_TREE_ITEM_ENTITY_TYPE,
-  POLL_TREE_ROOT_ENTITY_TYPE,
+    POLL_TREE_ITEM_ENTITY_TYPE,
+    POLL_TREE_ROOT_ENTITY_TYPE,
   PollTreeItemModel,
 } from "./types";
 

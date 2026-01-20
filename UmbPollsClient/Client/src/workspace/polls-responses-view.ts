@@ -24,7 +24,6 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
                 //removed requestUpdate from here to avoid multiple render
                 //this.requestUpdate();
             });
-            console.log("id: " + this.pollid);
             this.fetchPolls().then(data => {
                 if (!this._poll) {
                     this._poll = data[0];
@@ -38,7 +37,6 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     }
 
     private async fetchPolls() {
-        console.log(this.pollid);
         const headers: Headers = new Headers()
         headers.set('Content-Type', 'application/json')
         headers.set('Accept', 'application/json')
@@ -90,7 +88,6 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
                 }
             })
             .catch(() => {
-                console.log('oh no, they did not confirm!')
                 return Promise.resolve('cancel');
             })
     }

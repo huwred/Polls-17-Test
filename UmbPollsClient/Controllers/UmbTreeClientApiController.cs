@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace UmbPollsClient.Controllers
 {
     [ApiVersion("1.0")]
-    [ApiExplorerSettings(GroupName = "UmbTreeClient")]
-    public class UmbTreeClientApiController : UmbTreeClientApiControllerBase
+    [ApiExplorerSettings(GroupName = "UmbPollsClient")]
+    public class UmbPollsClientApiController : UmbPollsClientApiControllerBase
     {
 
         [HttpGet("ping")]

@@ -205,9 +205,9 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
     }
 
     async #handleDelete(u: { target: any }) {
+        const dataId = u.target?.dataset?.id;
         umbConfirmModal(this, { headline: 'Delete Poll', content: 'Do you confirm?' })
             .then(async () => {
-                const dataId = u.target?.dataset?.id;
                 const headers: Headers = new Headers()
                 headers.set('Content-Type', 'application/json')
                 headers.set('Accept', 'application/json')
@@ -232,7 +232,6 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
                 }
             })
             .catch(() => {
-                console.log('oh no, they did not confirm!')
                 return Promise.resolve('cancel');
             })
     }
@@ -247,7 +246,7 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
         this._answers.sort((a: any, b: any) => Number(a.index) - Number(b.index));
 
         //reset the values
-        this.newSortInp.value = '10';
+        this.newSortInp.value = '1';
         this.newValueInp.value = '';
     }
 

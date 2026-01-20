@@ -143,9 +143,10 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     }
 
     async #handleDelete(u: { target: any }) {
+        const dataId = u.target?.dataset?.id;
+
         umbConfirmModal(this, { headline: 'Delete Poll', content: 'Do you confirm?' })
             .then(async () => {
-                const dataId = u.target?.dataset?.id;
                 const headers: Headers = new Headers()
                 headers.set('Content-Type', 'application/json')
                 headers.set('Accept', 'application/json')
@@ -170,7 +171,6 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
                 }
             })
             .catch(() => {
-                console.log('oh no, they did not confirm!')
                 return Promise.resolve('cancel');
             })
 

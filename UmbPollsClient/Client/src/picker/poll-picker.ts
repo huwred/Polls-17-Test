@@ -24,16 +24,10 @@ export class PollPicker extends UmbLitElement implements UmbPropertyEditorUiElem
     // do I need this?
     connectedCallback() {
         super.connectedCallback();
-        // in connectedCallback the this.value is ready
-        console.log('this is my value', this.value);
-        //this._items = this.value;
-
     }
 
     #updatePropertyEditorValue() {
         this.value = this._items;
-        console.log("updated value");
-        console.log(this.value)
         this.dispatchEvent(new UmbChangeEvent()) 
     }  
     render() {
@@ -63,7 +57,6 @@ export class PollPicker extends UmbLitElement implements UmbPropertyEditorUiElem
             }).catch(() => undefined);
 
         this._items = [returnedValue!.poll];
-        console.log(JSON.stringify(this._items))
         this.#updatePropertyEditorValue();
     }
 }

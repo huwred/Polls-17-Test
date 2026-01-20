@@ -6,7 +6,7 @@ import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 
 import './sorter-item.js';
 
-export type ModelEntryType = {
+export type AnswerEntryType = {
 	sortid: string;
 	id: string;
 	name: string;
@@ -19,15 +19,15 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 	// Make this element form-associated
 	static formAssociated = true;
 
-	private _items?: ModelEntryType[];
+	private _items?: AnswerEntryType[];
 	private _internals?: ElementInternals;
 	private _form?: HTMLFormElement;
 
 	@property({ type: Array, attribute: false })
-	public get items(): ModelEntryType[] {
+	public get items(): AnswerEntryType[] {
 		return this._items ?? [];
 	}
-	public set items(value: ModelEntryType[]) {
+	public set items(value: AnswerEntryType[]) {
 		// Only set initial model
 		if (this._items !== undefined) return;
 		this._items = value;
@@ -88,7 +88,6 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 	// Contribute fields to parent form
 	#updateFormValue() {
 		// Keep validity in sync
-		console.log(this._items);
 		this.#validate();
 
 		// Build a FormData payload with repeated keys
@@ -108,7 +107,6 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 
 	// Fallback: append our data to the FormData right before submission
 	#onFormData = (e: FormDataEvent) => {
-		console.log(this._items);
 		(this._items ?? []).forEach((item) => {
 			e.formData.append('Answers', item.name);
 			e.formData.append('answerssort', String(item.sort));
@@ -126,7 +124,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 	}
 
 	// Sorter: use stable ids for element and model
-	#sorter = new UmbSorterController<ModelEntryType, PollSorterItem>(this, {
+	#sorter = new UmbSorterController<AnswerEntryType, PollSorterItem>(this, {
 		getUniqueOfElement: (element) => element.getAttribute('sortid') ?? '', // read reflected attribute
 		getUniqueOfModel: (modelEntry) => String(modelEntry.sortid),            // ensure string
 		identifier: 'mediawiz-polls-sorters',
@@ -141,7 +139,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 		},
 	});
 
-	removeItem = (item: ModelEntryType) => {
+	#removeItem = (item: AnswerEntryType) => {
 		const oldValue = this._items;
 		this._items = this._items!.filter((r) => r.sortid !== item.sortid);
 		this.requestUpdate('items', oldValue);
@@ -150,7 +148,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 		this.#updateFormValue();
 	};
 
-	addItem() {
+	#addItem() {
 		const newVal = this.newValueInp.value.trim();
 		if (!newVal) return;
 		const qId = this.questionId.value;
@@ -166,6 +164,13 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 	}
 
 	override render() {
+		if (!this.items) {
+			return html`
+			<uui-form-layout-item>
+				<p>No Answers defined</p>
+			</uui-form-layout-item>
+			`;
+		}
 		return html`
 			<div class="sorter-container">
 				${repeat(
@@ -174,7 +179,6 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 					(item) => html`
 						<poll-sorter-item style="width: fit-content;" sortid=${item.sortid} name=${item.name} id=${item.id} sort=${item.sort} question="${item.question}">
 							<uui-icon name="icon-grip" class="handle" aria-hidden="true"></uui-icon>
-
 							<uui-input
 							  slot="action"
 							  id="${item.sortid}"
@@ -194,7 +198,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 							  }}>
 							  <div slot="append" style="padding-left:var(--uui-size-2, 6px)">
 								<uui-icon-registry-essential>
-									<uui-icon color="red" data-id="${item.sortid}" title="Remove Answer" name="delete" @click=${() => this.removeItem(item)}></uui-icon>
+									<uui-icon color="red" data-id="${item.sortid}" title="Remove Answer" name="delete" @click=${() => this.#removeItem(item)}></uui-icon>
 								</uui-icon-registry-essential>
 							  </div>
 							</uui-input>
@@ -209,7 +213,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 				<uui-input style="display:none;" id="question-id" name="Question" type="text" pristine value="${this.items[0]?.question ?? ''}"></uui-input>
 				<uui-input id="new-answer" name="Answers" type="text" pristine value="" placeholder="Add another Answer">
 					<div slot="append">
-						<uui-icon name="icon-badge-add" @click=${() => this.addItem()}></uui-icon>
+						<uui-icon name="icon-badge-add" @click=${() => this.#addItem()}></uui-icon>
 					</div>
 				</uui-input>
 			</uui-form-layout-item>
@@ -224,6 +228,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 				width: max-content;
 				border-radius: calc(var(--uui-border-radius) * 2);
 				padding: var(--uui-size-space-1);
+				--uui-icon-color:green;--uui-icon-cursor: pointer;
 			}
 			.sorter-placeholder {
 				opacity: 0.2;
@@ -231,6 +236,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 			.sorter-container {
 				min-height: 20px;
 			}
+
 		`,
 
 	];
