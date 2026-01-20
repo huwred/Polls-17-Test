@@ -13,6 +13,17 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
+	  <None Remove="readme.md" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Content Include="readme.md">
+	    <PackagePath></PackagePath>
+	    <Pack>true</Pack>
+	  </Content>
+	</ItemGroup>
+	
+	<ItemGroup>
 		<PackageReference Include="Umbraco.Cms.Api.Management" Version="17.0.2" />
 		<PackageReference Include="Umbraco.Cms.Web.Website" Version="17.0.2" />
 	</ItemGroup>
