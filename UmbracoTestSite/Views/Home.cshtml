@@ -1,7 +1,22 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+﻿@using System.Text.Json
+@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @{
-	Layout = null;
+
+	Layout = "layout.cshtml";
+
 }
-<h1>test</h1>
-@Model.Value("testPoll")
+<h2>Poll test</h2>
+    @if (Model.Value<string[]>("list").Length > 0)
+    {
+    <ul>
+        @foreach (var item in Model.Value<string[]>("list"))
+        {
+            <li>@item</li>
+        }
+    </ul>
+    }
+    <div class="w-25">
+    @await Component.InvokeAsync("Polls", new { Model = Model.Value("testPoll") })
+    </div>
+@await Html.GetBlockGridHtmlAsync(Model, "blockGrid")
