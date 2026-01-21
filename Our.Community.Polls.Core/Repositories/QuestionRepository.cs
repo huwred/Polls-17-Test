@@ -35,8 +35,8 @@ namespace Our.Community.Polls.Repositories
             var query = new Sql().Select("*").From(TableConstants.Questions.TableName).Where($"id={id}");
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
             var question = scope.Database.Fetch<Question>(query).FirstOrDefault();
-            question.Answers = GetAnswers(id);
-            question.Responses = GetResponses(id);
+            question?.Answers = GetAnswers(id);
+            question?.Responses = GetResponses(id);
             return question;
 
         }
