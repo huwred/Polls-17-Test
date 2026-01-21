@@ -121,31 +121,30 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
         const headers: Headers = new Headers()
         headers.set('Content-Type', 'application/json')
         headers.set('Accept', 'application/json')
-        const response = await fetch('/get-overview/', {
-            method: 'GET',
-            headers: headers
-        })
 
-        const data = await response.json()
-        if (response.ok) {
-            const poll = data
-            if (poll) {
-                return Promise.resolve(poll);
-            } else {
-                return Promise.reject(new Error(`No polls found`))
+        try {
+            const response = await fetch('/get-overview/', {
+                method: 'GET',
+                headers: headers
+            });
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
             }
-        } else {
-            // handle the errors
-            const error = 'unknown'
-            console.warn(`⚠️ Error ${response.status}:`, data.message || data);
-            return Promise.reject(error)
+            const data = await response.json();
+            const poll = data;
+            return Promise.resolve(poll);
         }
+        catch (error) {
+            console.warn(`⚠️ Error :`);
+            return Promise.reject('unknown')
+        }
+
     }
 
     async #handleDelete(u: { target: any }) {
         const dataId = u.target?.dataset?.id;
 
-        umbConfirmModal(this, { headline: 'Delete Poll', content: 'Do you confirm?' })
+        umbConfirmModal(this, { headline: 'Delete Poll', color: 'danger', content: 'Are you sure you want to delete?' })
             .then(async () => {
                 const headers: Headers = new Headers()
                 headers.set('Content-Type', 'application/json')

@@ -61,7 +61,7 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     }
 
     async #handleDelete(u: { target: any }) {
-        umbConfirmModal(this, { headline: 'Delete All the Responses', content: 'Do you confirm?' })
+        umbConfirmModal(this, { headline: 'Delete All the Responses',color:'danger', content: 'Are you sure you want to delete?' })
             .then(async () => {
                 const dataId = u.target?.dataset?.id;
                 const headers: Headers = new Headers()

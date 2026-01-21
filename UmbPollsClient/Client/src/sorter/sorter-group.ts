@@ -1,10 +1,12 @@
 ﻿import type { PollSorterItem } from './sorter-item.js';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
-import { css, html, customElement, LitElement, repeat, property, query } from '@umbraco-cms/backoffice/external/lit';
+import { css, html, customElement, LitElement, repeat, property, query, state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { UmbSorterController } from '@umbraco-cms/backoffice/sorter';
 
 import './sorter-item.js';
+import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
+import { UmbValidationContext } from '@umbraco-cms/backoffice/validation';
 
 export type AnswerEntryType = {
 	sortid: string;
@@ -18,7 +20,8 @@ export type AnswerEntryType = {
 export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 	// Make this element form-associated
 	static formAssociated = true;
-
+	@state()
+	private _errorMsg: string = '';
 	private _items?: AnswerEntryType[];
 	private _internals?: ElementInternals;
 	private _form?: HTMLFormElement;
@@ -40,6 +43,8 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 
 	@query('#new-answer') newValueInp!: HTMLInputElement;
 	@query('#question-id') questionId!: HTMLInputElement;
+
+	#validation = new UmbValidationContext(this);
 
 	constructor() {
 		super();
@@ -76,11 +81,20 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 
 	// Custom validity (example, prevent empty list)
 	#validate() {
+        console.log('Validating sorter group');
+		this.#validation.validate().then(() => {
+			console.log('Valid');
+		}, () => {
+			console.log('Invalid');
+		});
+
 		if (!this._internals) return;
 		const valid = !!this._items && this._items.length > 0 && this._items.every((i) => i.name.trim().length > 0);
 		if (!valid) {
-			this._internals.setValidity({ customError: true }, 'Please add at least one answer.');
+			this._errorMsg = 'Please add at least one answer';
+			this._internals.setValidity({ customError: true }, this._errorMsg);
 		} else {
+			this._errorMsg = '';
 			this._internals.setValidity({});
 		}
 	}
@@ -140,17 +154,29 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 	});
 
 	#removeItem = (item: AnswerEntryType) => {
-		const oldValue = this._items;
-		this._items = this._items!.filter((r) => r.sortid !== item.sortid);
-		this.requestUpdate('items', oldValue);
-		// After render, refresh sorter mapping
-		this.updateComplete.then(() => this.#sorter.setModel(this._items!));
-		this.#updateFormValue();
+		umbConfirmModal(this, { headline: 'Delete Answer', color: 'danger', content: 'Are you sure you want to delete?' })
+			.then( () => {
+				const oldValue = this._items;
+				this._items = this._items!.filter((r) => r.sortid !== item.sortid);
+				this.requestUpdate('items', oldValue);
+				// After render, refresh sorter mapping
+				this.updateComplete.then(() => this.#sorter.setModel(this._items!));
+				this.#updateFormValue();
+			})
+			.catch(() => {
+				console.log("User has rejected");
+			})
 	};
 
 	#addItem() {
 		const newVal = this.newValueInp.value.trim();
-		if (!newVal) return;
+		if (!newVal) {
+			if (!this._internals) return;
+			this._errorMsg = 'Please enter an answer';
+			this._internals.setValidity({ customError: true }, this._errorMsg);
+			return;
+		};
+		this._errorMsg = ''; this._internals?.setValidity({});
 		const qId = this.questionId.value;
 		const newId = crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}_${Math.random()}`;
 		const oldValue = this._items;
@@ -207,7 +233,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 				)}
 			</div>
 
-			<uui-form-layout-item>
+			<uui-form-layout-item id="new-answer-item">
 				<uui-label slot="label">Add new Answer</uui-label>
 				<span slot="description">Form item accepts a sort order + description, keep it short.</span>
 				<uui-input style="display:none;" id="question-id" name="Question" type="text" pristine value="${this.items[0]?.question ?? ''}"></uui-input>
@@ -216,8 +242,11 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 						<uui-icon name="icon-badge-add" @click=${() => this.#addItem()}></uui-icon>
 					</div>
 				</uui-input>
+
 			</uui-form-layout-item>
-		`;
+				  ${this._errorMsg
+			? html`<uui-form-validation-message for="new-answer-item" styles="color:red">${this._errorMsg}</uui-form-validation-message>`
+				: null}		`;
 	}
 
 	static override styles = [

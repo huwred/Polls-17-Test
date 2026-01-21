@@ -9,7 +9,7 @@ export class PollDelete extends UmbEntityActionBase<ManifestEntityActionDefaultK
 
         let id = parseInt(this.args.unique);
 
-        umbConfirmModal(this, { headline: 'Delete Poll', content: 'Do you confirm?' })
+        umbConfirmModal(this, { headline: 'Delete Poll',color:'danger', content: 'Are you sure you want to delete?' })
             .then(async () => {
                 const headers: Headers = new Headers()
                 headers.set('Content-Type', 'application/json')

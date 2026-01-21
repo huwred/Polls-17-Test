@@ -206,7 +206,12 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
 
     async #handleDelete(u: { target: any }) {
         const dataId = u.target?.dataset?.id;
-        umbConfirmModal(this, { headline: 'Delete Poll', content: 'Do you confirm?' })
+        umbConfirmModal(this, {
+            headline: 'Delete Poll',
+            content: this.localize.term("defaultdialogs_confirmdelete"),
+            color: 'danger',
+            confirmLabel: this.localize.term("actions_delete"),
+        })
             .then(async () => {
                 const headers: Headers = new Headers()
                 headers.set('Content-Type', 'application/json')

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-	  <Version>17.0.0</Version>
+	  <Version>17.0.1</Version>
 	  <Owners>Huw Reddick</Owners>
 	  <Authors>Huw Reddick</Authors>
 	  <Copyright>Huw Reddick</Copyright>
@@ -32,10 +32,10 @@
 	</Target>-->
 	
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="*" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="*" />
-    <PackageReference Include="Umbraco.Cms.Api.Common" Version="*" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="*" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.*" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.*" />
+    <PackageReference Include="Umbraco.Cms.Api.Common" Version="17.*" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="17.*" />
   </ItemGroup>
 
   <ItemGroup>
