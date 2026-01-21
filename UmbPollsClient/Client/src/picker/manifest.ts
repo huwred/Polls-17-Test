@@ -17,7 +17,7 @@ const pickerModalManifest: UmbExtensionManifest = {
     type: 'modal',
     alias: 'Poll.Modal',
     name: 'Poll Modal',
-    element: () => import('../modals/poll-picker-modal.js')
+    element: () => import('./poll-picker-modal.js')
 }
 
 export const manifests: Array<UmbExtensionManifest> = [

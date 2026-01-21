@@ -1,7 +1,7 @@
 ﻿import { html, customElement, state, property } from "@umbraco-cms/backoffice/external/lit";
 import { UmbPropertyEditorUiElement } from "@umbraco-cms/backoffice/property-editor";
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { POLL_MODAL_TOKEN } from "../modals/poll-modal.token.js";
+import { POLL_MODAL_TOKEN } from "./poll-modal.token.js";
 import { umbOpenModal } from "@umbraco-cms/backoffice/modal";
 import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
 import { PollQuestion } from "../workspace/poll-question.js"

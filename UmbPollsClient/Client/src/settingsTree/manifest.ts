@@ -44,7 +44,7 @@ const menuManifest: UmbExtensionManifest = {
     alias: "Polls.Tree.Menu",
     name: "Polls Menu",
     meta: {
-        label: "Polls!!",
+        label: "Polls",
         icon: "icon-bar-chart",
         entityType: POLL_TREE_ITEM_ENTITY_TYPE,
     }
@@ -79,9 +79,9 @@ const menuitemManifest: UmbExtensionManifest = {
         menus: [menuManifest.alias],
         treeAlias: treeManifest.alias,
         hideTreeRoot: false,
-    }
+    },
+    
 };
-
 
 
 export const manifests: Array<UmbExtensionManifest> = [

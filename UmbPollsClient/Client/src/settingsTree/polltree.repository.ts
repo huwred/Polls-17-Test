@@ -15,9 +15,11 @@ export class PollTreeRepository
 {
   constructor(host: UmbControllerHost) {
       super(host, PollTreeDataSource, POLL_TREE_STORE_CONTEXT);
+      console.log("PollTreeRepository constructed");
   }
 
-  async requestTreeRoot() {
+    async requestTreeRoot() {
+        console.log("PollTreeRepository requestTreeRoot called");
       var data: PollTreeRootModel = {
       unique: null,
       entityType: POLL_TREE_ROOT_ENTITY_TYPE,

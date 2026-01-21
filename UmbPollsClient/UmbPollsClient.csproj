@@ -22,14 +22,14 @@
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
 	  <PackageOutputPath>E:\Umbraco-Dev\Nuget</PackageOutputPath>
-	  <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+	  <!--<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>-->
   </PropertyGroup>
 
-	<Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+	<!--<Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
 		<ItemGroup>
 			<BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
 		</ItemGroup>
-	</Target>
+	</Target>-->
 	
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Web.Website" Version="*" />
@@ -64,8 +64,8 @@
 
   <ItemGroup>
 	  <ProjectReference Include="..\Our.Community.Polls.Core\Our.Community.Polls.Core.csproj">
-		  <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-		  <IncludeAssets>Our.Community.Polls.Core.dll</IncludeAssets>		  
+		  <!--<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+		  <IncludeAssets>Our.Community.Polls.Core.dll</IncludeAssets>-->		  
 	  </ProjectReference>
 	  
   </ItemGroup>
