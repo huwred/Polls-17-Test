@@ -6,17 +6,11 @@
 	Layout = "layout.cshtml";
 
 }
-<h2>Poll test</h2>
-    @if (Model.Value<string[]>("list").Length > 0)
-    {
-    <ul>
-        @foreach (var item in Model.Value<string[]>("list"))
-        {
-            <li>@item</li>
-        }
-    </ul>
-    }
+<h2>@Model.Value("pageTitle")</h2>
+<p>
     <div class="w-25">
     @await Component.InvokeAsync("Polls", new { Model = Model.Value("testPoll") })
-    </div>
+    </div>    
+</p>
+
 @await Html.GetBlockGridHtmlAsync(Model, "blockGrid")
