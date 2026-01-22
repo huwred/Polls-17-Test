@@ -15,3 +15,6 @@ Updated to Umbraco 17 / .NET 10 - to use new backoffice UI.
 ![Screenshot of polls overview.](/assets/images/overview.png)
 
 ![Screenshot of polls edit view.](/assets/images/editview.png)
+
+
+![Screenshot of poll content picker.](/assets/images/picker.png)
