@@ -1,4 +1,4 @@
-﻿# Our.Community.Polls
+﻿# Our.Community.Polls.Core
 
 Simple Poll Property Editor for Umbraco
 
