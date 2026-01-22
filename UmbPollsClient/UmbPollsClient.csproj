@@ -4,7 +4,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
-	  <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+	<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+	  <!--<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>-->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -16,13 +17,12 @@
 	  <PackageId>Our.Community.Polls</PackageId>
 	  <Title>Our.Community.Polls</Title>
 	  <Description>Create dynamic, interactive polls for your Umbraco web site. </Description>
-	  <PackageProjectUrl>https://github.com/huwred/Our.Community.Polls</PackageProjectUrl>
+	  <PackageProjectUrl>https://github.com/huwred/Our.Community.Polls.17</PackageProjectUrl>
 	  <PackageTags>umbraco-marketplace umbraco plugin package</PackageTags>
-	  <RepositoryUrl>https://github.com/huwred/Our.Community.Polls</RepositoryUrl>
+	  <RepositoryUrl>https://github.com/huwred/Our.Community.Polls.17</RepositoryUrl>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <PackageReadmeFile>readme.md</PackageReadmeFile>
 	  <PackageOutputPath>E:\Umbraco-Dev\Nuget</PackageOutputPath>
-	  <!--<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>-->
   </PropertyGroup>
 
 	<!--<Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
@@ -32,10 +32,10 @@
 	</Target>-->
 	
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.*" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.*" />
-    <PackageReference Include="Umbraco.Cms.Api.Common" Version="17.*" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="17.*" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="[17.0.0,)" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="[17.0.0,)" />
+    <PackageReference Include="Umbraco.Cms.Api.Common" Version="[17.0.0,)" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.0.0,)" />
   </ItemGroup>
 
   <ItemGroup>

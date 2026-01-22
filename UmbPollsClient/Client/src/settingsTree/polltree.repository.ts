@@ -23,7 +23,7 @@ export class PollTreeRepository
       var data: PollTreeRootModel = {
       unique: null,
       entityType: POLL_TREE_ROOT_ENTITY_TYPE,
-      name: "Polls Root",
+      name: "Polls",
       icon: "icon-folder",
           hasChildren: true,
       isFolder: true,

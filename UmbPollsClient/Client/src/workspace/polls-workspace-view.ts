@@ -11,18 +11,17 @@ import '../sorter/sorter-group.js';
 export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
     @state()
     text?: string = '';
-    pollid?: string | null = '';
-    workspaceAlias: string = 'polls-workspace';
-
     @state()
     private _answers: any;
     @state()
     private _poll: any;
 
-    @query('#key-value-new-sort')
-    newSortInp!: HTMLInputElement;
+    pollid?: string | null = '';
+    workspaceAlias: string = 'polls-workspace';
 
-    @query('#key-value-new-value')
+    @query('#answer-new-sort')
+    newSortInp!: HTMLInputElement;
+    @query('#answer-new-value')
     newValueInp!: HTMLInputElement;
 
     constructor() {
@@ -57,8 +56,8 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
                 <span slot="description">
                     Form item accepts a sort order + description, keep it short.
                 </span>
-                <uui-input id="key-value-new-sort" pristine="" title="Sort Order" type="number" label="label" step="1" value="10" min="0" max="10"></uui-input>
-                <uui-input id="key-value-new-value" name="Answers" type="text" label="label"  pristine="" value="" placeholder="Add another Answer">
+                <uui-input id="answer-new-sort" pristine="" title="Sort Order" type="number" label="label" step="1" value="10" min="0" max="10"></uui-input>
+                <uui-input id="answer-new-value" name="Answers" type="text" label="label"  pristine="" value="" placeholder="Add another Answer">
                     <div slot="append"  >
                         <uui-icon name="icon-badge-add" @click="${this.#addAnswer}"></uui-icon>
                     </div>

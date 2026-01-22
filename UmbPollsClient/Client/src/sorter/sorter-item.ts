@@ -5,7 +5,6 @@ import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 @customElement('poll-sorter-item')
 export class PollSorterItem extends UmbElementMixin(LitElement) {
 
-
 	@property({ type: String, reflect: true })
 	id: string = '';
 	@property({ type: Number, reflect: true })

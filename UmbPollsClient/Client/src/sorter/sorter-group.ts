@@ -79,7 +79,7 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 		this.#updateFormValue();
 	}
 
-	// Custom validity (example, prevent empty list)
+	// Custom validity (prevent empty list)
 	#validate() {
         console.log('Validating sorter group');
 		this.#validation.validate().then(() => {
@@ -192,9 +192,9 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 	override render() {
 		if (!this.items) {
 			return html`
-			<uui-form-layout-item>
-				<p>No Answers defined</p>
-			</uui-form-layout-item>
+				<uui-form-layout-item>
+					<p>No Answers defined</p>
+				</uui-form-layout-item>
 			`;
 		}
 		return html`
@@ -232,7 +232,6 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 					`,
 				)}
 			</div>
-
 			<uui-form-layout-item id="new-answer-item">
 				<uui-label slot="label">Add new Answer</uui-label>
 				<span slot="description">Form item accepts a sort order + description, keep it short.</span>
@@ -242,11 +241,11 @@ export class PollsSorterGroup extends UmbElementMixin(LitElement) {
 						<uui-icon name="icon-badge-add" @click=${() => this.#addItem()}></uui-icon>
 					</div>
 				</uui-input>
-
 			</uui-form-layout-item>
-				  ${this._errorMsg
-			? html`<uui-form-validation-message for="new-answer-item" styles="color:red">${this._errorMsg}</uui-form-validation-message>`
-				: null}		`;
+			${this._errorMsg
+				? html`<uui-form-validation-message for="new-answer-item" styles="color:red">${this._errorMsg}</uui-form-validation-message>`
+				: null}
+			`;
 	}
 
 	static override styles = [
