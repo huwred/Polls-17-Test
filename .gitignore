@@ -417,3 +417,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 /UmbPollsClient/wwwroot/App_Plugins/UmbPollsClient
+/UmbracoTestSite/umbraco/Data/Umbraco.sqlite.db
