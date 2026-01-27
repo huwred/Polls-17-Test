@@ -12,3 +12,9 @@ Updated to Umbraco 17 / .NET 10 - to use new backoffice UI.
 - UI: Lit web components, UUI components, UmbElementMixin, UmbSorterController, umbConfirmModal.
 - Backoffice extension points: SidebarApp, Tree repository, Workspace views, Entity actions.
 
+![Screenshot of polls overview.](/assets/images/overview.png)
+
+![Screenshot of polls edit view.](/assets/images/editview.png)
+
+
+![Screenshot of poll content picker.](/assets/images/picker.png)
