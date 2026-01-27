@@ -46,7 +46,7 @@ public class PollsTreeController : UmbPollsClientApiControllerBase
 
     [HttpGet("Children")]
     [ProducesResponseType(typeof(PagedViewModel<PollTreeItemResponseModel>), statusCode: StatusCodes.Status200OK)]
-    public ActionResult<PagedViewModel<PollTreeItemResponseModel>> GetChildren(string parent, int skip = 0, int take = 100)
+    public ActionResult<PagedViewModel<PollTreeItemResponseModel>> GetAnswers(string parent, int skip = 0, int take = 100)
     {
         var poll = _questions.GetAnswers(Convert.ToInt32(parent));
 

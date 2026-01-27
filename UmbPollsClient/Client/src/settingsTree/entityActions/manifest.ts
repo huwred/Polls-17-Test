@@ -33,4 +33,4 @@ const entityActionManifests: Array<ManifestEntityAction> = [
 ];
 
 
-export const menuManifests = [  ...entityActionManifests];
+export const manifests = [  ...entityActionManifests];

@@ -4,6 +4,7 @@ import { css, html, customElement, LitElement, state, repeat } from '@umbraco-cm
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { POLLS_WORKSPACE_CONTEXT } from "./polls-workspace-context";
 import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
+import { PollQuestionService } from "../models/poll-questionservice";
 
 @customElement('polls-responses-view')
 export class PollsResponseView extends UmbElementMixin(LitElement) {
@@ -19,14 +20,14 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
         super();
         this.provideContext(UMB_WORKSPACE_CONTEXT, this);
         this.consumeContext(POLLS_WORKSPACE_CONTEXT, (context) => {
-            context?.pollId.subscribe((pollId) => {
+            context?.pollId.subscribe((pollId: string | null | undefined) => {
                 this.pollid = pollId;
                 //removed requestUpdate from here to avoid multiple render
                 //this.requestUpdate();
             });
             this.fetchPolls().then(data => {
                 if (!this._poll) {
-                    this._poll = data[0];
+                    this._poll = data;
 
                 }
             });
@@ -37,55 +38,22 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     }
 
     private async fetchPolls() {
-        const headers: Headers = new Headers()
-        headers.set('Content-Type', 'application/json')
-        headers.set('Accept', 'application/json')
-        const response = await fetch('/get-overview/?id=' + this.pollid, {
-            method: 'GET',
-            headers: headers
-        })
+        const poll = await PollQuestionService.GetOverviewById(Number(this.pollid));
+        return Promise.resolve(poll);
 
-        const data = await response.json()
-        if (response.ok) {
-            const poll = data
-            if (poll) {
-                return Promise.resolve(poll);
-            } else {
-                return Promise.reject(new Error(`No polls found`))
-            }
-        } else {
-            // handle the errors
-            const error = 'unknown'
-            return Promise.reject(error)
-        }
     }
 
     async #handleDelete(u: { target: any }) {
         umbConfirmModal(this, { headline: 'Delete All the Responses',color:'danger', content: 'Are you sure you want to delete?' })
             .then(async () => {
                 const dataId = u.target?.dataset?.id;
-                const headers: Headers = new Headers()
-                headers.set('Content-Type', 'application/json')
-                headers.set('Accept', 'application/json')
-                const response = await fetch('/delete-responses/' + dataId, {
-                    method: 'DELETE',
-                    headers: headers
-                })
-
-                const data = await response.json()
-                if (response.ok) {
-                    const poll = data
-                    if (poll) {
-                        return Promise.resolve(poll);
-                    } else {
-                        return Promise.reject(new Error(`No responses found`))
-                    }
+                let poll = await PollQuestionService.DeleteResponses(dataId);
+                if (poll) {
+                    return Promise.resolve(poll);
                 } else {
-                    // handle the errors
-                    const error = 'unknown'
-                    console.warn(`⚠️ Error ${response.status}:`, data.message || data);
-                    return Promise.reject(error)
+                    return Promise.reject(new Error(`No polls found`))
                 }
+
             })
             .catch(() => {
                 return Promise.resolve('cancel');

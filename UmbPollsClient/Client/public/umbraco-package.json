@@ -1,14 +1,14 @@
 {
-  "id": "UmbPollsClient",
-  "name": "UmbPollsClient",
-  "version": "0.0.0",
+  "id": "MediaWizPolls",
+  "name": "MediaWizPolls",
+  "version": "17.0.0",
   "allowTelemetry": true,
   "extensions": [
     {
-      "name": "Umb Polls Client Bundle",
-      "alias": "UmbPollsClient.Bundle",
+      "name": "Our Community Polls Bundle",
+      "alias": "MediaWizPolls.Bundle",
       "type": "bundle",
-      "js": "/App_Plugins/UmbPollsClient/umb-polls-client.js"
+      "js": "/App_Plugins/OurCommunityPolls/our-community-polls.js"
     }
   ]
 }

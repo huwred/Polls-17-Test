@@ -1,5 +1,5 @@
-import {
-  UmbTreeItemModel,
+import type {
+    UmbTreeItemModel,
     UmbTreeRootModel,
 } from "@umbraco-cms/backoffice/tree";
 

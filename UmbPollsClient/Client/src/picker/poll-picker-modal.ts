@@ -1,9 +1,10 @@
 ﻿import { customElement, html, property,state } from '@umbraco-cms/backoffice/external/lit';
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
-import { UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
+import type { UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
 import type { UmbModalContext } from '@umbraco-cms/backoffice/modal';
 import type { PollModalData, PollModalValue } from './poll-modal.token.js';
-import { PollQuestion } from "../workspace/poll-question.js"
+import type { PollQuestion } from "../models/poll-question.js";
+import { PollQuestionService } from '../models/poll-questionservice.js';
 
 @customElement('poll-dialog')
 export class PollDialogElement
@@ -52,26 +53,11 @@ export class PollDialogElement
         this.modalContext?.submit();
     }
     private async fetchPolls() {
-        const headers: Headers = new Headers()
-        headers.set('Content-Type', 'application/json')
-        headers.set('Accept', 'application/json')
-        const response = await fetch('/get-overview/', {
-            method: 'GET',
-            headers: headers
-        })
-
-        const data = await response.json()
-        if (response.ok) {
-            const poll = data
-            if (poll) {
-                return Promise.resolve(poll);
-            } else {
-                return Promise.reject(new Error(`No polls found`))
-            }
+        const poll = await PollQuestionService.GetOverview();
+        if (poll) {
+            return Promise.resolve(poll);
         } else {
-            // handle the errors
-            const error = 'unknown'
-            return Promise.reject(error)
+            return Promise.reject(new Error(`No polls found`))
         }
     }
 

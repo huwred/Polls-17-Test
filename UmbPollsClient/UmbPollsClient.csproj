@@ -71,10 +71,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\App_Plugins\UmbPollsClient\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Client\src\workspace\manifest.ts">
       <SubType>Code</SubType>
     </None>

@@ -1,25 +1,25 @@
 ﻿import { UmbContextBase } from "@umbraco-cms/backoffice/class-api";
 import {
     UMB_WORKSPACE_CONTEXT,
-    UmbRoutableWorkspaceContext,
-    UmbWorkspaceContext,
+    type UmbRoutableWorkspaceContext,
+    type UmbWorkspaceContext,
     UmbWorkspaceRouteManager,
 } from "@umbraco-cms/backoffice/workspace";
 import { POLL_TREE_ROOT_ENTITY_TYPE } from "../settingsTree/types";
 import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
-import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
+import type { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import PollsWorkspaceElement from "./workspace.element";
 
-export default class PollsResponsesContext
+export default class PollsRootContext
     extends UmbContextBase
     implements UmbWorkspaceContext, UmbRoutableWorkspaceContext {
-    workspaceAlias = "polls.Responses";
+    workspaceAlias = "polls.Root";
 
     routes = new UmbWorkspaceRouteManager(this);
 
     constructor(host: UmbControllerHost) {
         super(host, UMB_WORKSPACE_CONTEXT.toString());
-        this.provideContext(POLLS_RESPONSE_CONTEXT, this);
+        this.provideContext(POLLS_ROOT_CONTEXT, this);
 
         this.routes.setRoutes([
             {
@@ -38,5 +38,5 @@ export default class PollsResponsesContext
     }
 }
 
-export const POLLS_RESPONSE_CONTEXT =
-    new UmbContextToken<PollsResponsesContext>("scriptManagerDetailContext");
+export const POLLS_ROOT_CONTEXT =
+    new UmbContextToken<PollsRootContext>("scriptManagerDetailContext");

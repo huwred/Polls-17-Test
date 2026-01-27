@@ -2,9 +2,10 @@
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, LitElement, state, query } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
-import { POLLS_WORKSPACE_CONTEXT } from "./polls-workspace-context";
+import { POLLS_WORKSPACE_CONTEXT } from "./polls-workspace-context.js";
 import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
 import '../sorter/sorter-group.js';
+import { PollQuestionService } from "../models/poll-questionservice.js";
 
 @customElement('polls-workspace-view')
 
@@ -28,7 +29,7 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
         super();
         this.provideContext(UMB_WORKSPACE_CONTEXT, this);
         this.consumeContext(POLLS_WORKSPACE_CONTEXT, (context) => {
-            context?.pollId.subscribe((pollId) => {
+            context?.pollId.subscribe((pollId: string | null | undefined) => {
                 this.pollid = pollId;
             })
         })
@@ -83,7 +84,7 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
     }
 
     override render() {
-
+       
        this.fetchPoll(Number(this.pollid)).then(data => {
             if (!this._answers) {
                 this._answers = data.answers;
@@ -180,27 +181,13 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
     ];
 
     private async fetchPoll(pollnum: number) {
-        const headers: Headers = new Headers()
-        headers.set('Content-Type', 'application/json')
-        headers.set('Accept', 'application/json')
-        const response = await fetch('/get-question/' + pollnum, {
-            method: 'GET',
-            headers: headers
-        })
-
-        const data = await response.json()
-        if (response.ok) {
-            const poll = data
-            if (poll) {
-                return Promise.resolve(poll);
-            } else {
-                return Promise.reject(new Error(`No polls found`))
-            }
+        const poll = await PollQuestionService.GetPollById(pollnum);
+        if (poll) {
+            return Promise.resolve(poll);
         } else {
-            // handle the errors
-            const error = 'unknown'
-            return Promise.reject(error)
+            return Promise.reject(new Error(`No polls found`))
         }
+
     }
 
     async #handleDelete(u: { target: any }) {
@@ -212,28 +199,13 @@ export class PollsWorkspaceView extends UmbElementMixin(LitElement) {
             confirmLabel: this.localize.term("actions_delete"),
         })
             .then(async () => {
-                const headers: Headers = new Headers()
-                headers.set('Content-Type', 'application/json')
-                headers.set('Accept', 'application/json')
-                const response = await fetch('/delete-question/' + dataId, {
-                    method: 'DELETE',
-                    headers: headers
-                })
-
-                const data = await response.json()
-                if (response.ok) {
-                    const poll = data
-                    if (poll) {
-                        return Promise.resolve(poll);
-                    } else {
-                        return Promise.reject(new Error(`No polls found`))
-                    }
+                const poll = await PollQuestionService.Delete(dataId);
+                if (poll) {
+                    return Promise.resolve(poll);
                 } else {
-                    // handle the errors
-                    const error = 'unknown'
-                    console.warn(`⚠️ Error ${response.status}:`, data.message || data);
-                    return Promise.reject(error)
+                    return Promise.reject(new Error(`No polls found`))
                 }
+
             })
             .catch(() => {
                 return Promise.resolve('cancel');

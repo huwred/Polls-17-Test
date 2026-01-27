@@ -25,5 +25,5 @@ export const onInit: UmbEntryPointOnInit = (_host, _extensionRegistry) => {
 };
 
 export const onUnload: UmbEntryPointOnUnload = (_host, _extensionRegistry) => {
-  console.log("Goodbye from my extension 👋");
+  console.log("Goodbye from my extension");
 };

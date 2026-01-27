@@ -1,5 +1,5 @@
 ﻿import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
-import { PollQuestion } from "../workspace/poll-question.js"
+import type { PollQuestion } from "../models/poll-question.js";
 
 export type PollModalData = {
     headline: string;

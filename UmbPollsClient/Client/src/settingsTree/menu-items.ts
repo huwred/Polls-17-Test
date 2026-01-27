@@ -2,7 +2,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { html, type TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import type { PollQuestion } from '../models/poll-question.js';
-import { PolQuestionService } from '../models/poll-questionservice.js';
+import { PollQuestionService } from '../models/poll-questionservice.js';
 import {
     POLL_TREE_ITEM_ENTITY_TYPE,
 } from "./types.js";
@@ -30,7 +30,7 @@ class PollsMenuItems extends UmbLitElement implements UmbMenuItemElement {
     async fetchPolls() {
         try {
             this._loading = true;
-            this._items = (await PolQuestionService.GetPolls()); // Fetch root-level items
+            this._items = (await PollQuestionService.GetPolls()); // Fetch root-level items
         } catch (e) {
             this._error = 'Error fetching items';
         } finally {
@@ -39,7 +39,6 @@ class PollsMenuItems extends UmbLitElement implements UmbMenuItemElement {
     }
 
     // Render items
-    //https://localhost:44348/umbraco/section/settings/workspace/polls-workspace-view/edit/2
     renderItems(items: PollQuestion[]): TemplateResult {
         return html`
 

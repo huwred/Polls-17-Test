@@ -1,5 +1,5 @@
 import { UmbContextToken } from "@umbraco-cms/backoffice/context-api";
-import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
+import type { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import { UmbUniqueTreeStore } from "@umbraco-cms/backoffice/tree";
 
 export class PollTreeStore extends UmbUniqueTreeStore {

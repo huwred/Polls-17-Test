@@ -1,11 +1,11 @@
-import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
-import { UmbApi } from "@umbraco-cms/backoffice/extension-api";
+import type { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
+import type { UmbApi } from "@umbraco-cms/backoffice/extension-api";
 import { UmbTreeRepositoryBase } from "@umbraco-cms/backoffice/tree";
 import { POLL_TREE_STORE_CONTEXT } from "./polltree.store";
 import {
   POLL_TREE_ROOT_ENTITY_TYPE,
-  PollTreeItemModel,
-  PollTreeRootModel,
+  type PollTreeItemModel,
+  type PollTreeRootModel,
 } from "./types";
 import { PollTreeDataSource } from "./polltree.data-source";
 

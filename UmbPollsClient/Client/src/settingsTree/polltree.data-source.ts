@@ -1,15 +1,15 @@
-import { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
+import type { UmbControllerHost } from "@umbraco-cms/backoffice/controller-api";
 import {
-  UmbTreeAncestorsOfRequestArgs,
-  UmbTreeChildrenOfRequestArgs,
-  UmbTreeRootItemsRequestArgs,
+  type UmbTreeAncestorsOfRequestArgs,
+  type UmbTreeChildrenOfRequestArgs,
+  type UmbTreeRootItemsRequestArgs,
   UmbTreeServerDataSourceBase,
 } from "@umbraco-cms/backoffice/tree";
-import { PollTreeItemResponseModel, UmbPollsClientService } from "../api";
+import { type PollTreeItemResponseModel, UmbPollsClientService } from "../api";
 import {
     POLL_TREE_ITEM_ENTITY_TYPE,
     POLL_TREE_ROOT_ENTITY_TYPE,
-  PollTreeItemModel,
+  type PollTreeItemModel,
 } from "./types";
 
 export class PollTreeDataSource extends UmbTreeServerDataSourceBase<any, any> {

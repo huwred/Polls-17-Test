@@ -2,11 +2,12 @@
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import { css, html, customElement, LitElement, state, repeat } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
-import { POLLS_RESPONSE_CONTEXT } from "./polls-responses-context";
 import { umbConfirmModal } from '@umbraco-cms/backoffice/modal';
+import { POLLS_ROOT_CONTEXT } from "./polls-root-context";
+import { PollQuestionService } from "../models/poll-questionservice";
 
 @customElement('polls-overview')
-export class PollsResponseView extends UmbElementMixin(LitElement) {
+export class PollsOverviewView extends UmbElementMixin(LitElement) {
     @state()
     text?: string = '';
     pollid?: string | null = '';
@@ -18,7 +19,7 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     constructor() {
         super();
         this.provideContext(UMB_WORKSPACE_CONTEXT, this);
-        this.consumeContext(POLLS_RESPONSE_CONTEXT, () => {
+        this.consumeContext(POLLS_ROOT_CONTEXT, () => {
             this.requestUpdate();
         })
     }
@@ -118,26 +119,8 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     ];
 
     private async fetchPolls() {
-        const headers: Headers = new Headers()
-        headers.set('Content-Type', 'application/json')
-        headers.set('Accept', 'application/json')
-
-        try {
-            const response = await fetch('/get-overview/', {
-                method: 'GET',
-                headers: headers
-            });
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
-            }
-            const data = await response.json();
-            const poll = data;
-            return Promise.resolve(poll);
-        }
-        catch (error) {
-            console.warn(`⚠️ Error :`);
-            return Promise.reject('unknown')
-        }
+        const poll = await PollQuestionService.GetOverview();
+        return Promise.resolve(poll);
 
     }
 
@@ -146,28 +129,13 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
 
         umbConfirmModal(this, { headline: 'Delete Poll', color: 'danger', content: 'Are you sure you want to delete?' })
             .then(async () => {
-                const headers: Headers = new Headers()
-                headers.set('Content-Type', 'application/json')
-                headers.set('Accept', 'application/json')
-                const response = await fetch('/delete-question/' + dataId, {
-                    method: 'DELETE',
-                    headers: headers
-                })
-
-                const data = await response.json()
-                if (response.ok) {
-                    const poll = data
-                    if (poll) {
-                        return Promise.resolve(poll);
-                    } else {
-                        return Promise.reject(new Error(`No polls found`))
-                    }
+                const poll = await PollQuestionService.Delete(dataId);
+                if (poll) {
+                    return Promise.resolve(poll);
                 } else {
-                    // handle the errors
-                    const error = 'unknown'
-                    console.warn(`⚠️ Error ${response.status}:`, data.message || data);
-                    return Promise.reject(error)
+                    return Promise.reject(new Error(`No polls found`))
                 }
+
             })
             .catch(() => {
                 return Promise.resolve('cancel');
@@ -176,10 +144,10 @@ export class PollsResponseView extends UmbElementMixin(LitElement) {
     }
 }
 
-export default PollsResponseView;
+export default PollsOverviewView;
 
 declare global {
     interface HTMLElementTagNameMap {
-        'polls-overview': PollsResponseView;
+        'polls-overview': PollsOverviewView;
     }
 }

@@ -1,14 +1,11 @@
 ﻿import { html, customElement, state, property } from "@umbraco-cms/backoffice/external/lit";
-import { UmbPropertyEditorUiElement } from "@umbraco-cms/backoffice/property-editor";
+import type { UmbPropertyEditorUiElement } from "@umbraco-cms/backoffice/property-editor";
 import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { POLL_MODAL_TOKEN } from "./poll-modal.token.js";
-import { umbOpenModal } from "@umbraco-cms/backoffice/modal";
+import { umbConfirmModal, umbOpenModal } from "@umbraco-cms/backoffice/modal";
 import { UmbChangeEvent } from "@umbraco-cms/backoffice/event";
-import { PollQuestion } from "../workspace/poll-question.js"
-//type PollKeyValue = {
-//    key: string;
-//    value: string;
-//};
+import type { PollQuestion } from "../models/poll-question.js";
+
 type ArrayOf<T> = T[];
 
 @customElement("mediawiz-poll-picker")
@@ -35,14 +32,25 @@ export class PollPicker extends UmbLitElement implements UmbPropertyEditorUiElem
         <uui-ref-list>
             <uui-ref-node name="${this.value == null ? "No Poll Selected" : this.value[0]?.name}">
             <uui-icon slot="icon" name="icon-bar-chart"></uui-icon>
-            <uui-action-bar slot="actions"><uui-button label="delete"><uui-icon name="delete"></uui-icon></uui-button></uui-action-bar>
+            <uui-action-bar slot="actions"><uui-button label="delete" @click=${this.handleDelete}><uui-icon name="delete"></uui-icon></uui-button></uui-action-bar>
             </uui-ref-node>
         </uui-ref-list>
 
         <uui-button @click=${this._openModal} id="btn-add" look="placeholder" pristine="" label="Choose a Poll" type="button" color="default"></uui-button>
         `;
     }
+    handleDelete() {
+        umbConfirmModal(this, { headline: 'Remove Poll', color: 'danger', content: 'Are you sure you?' })
+            .then(async () => {
+                this._items = [];
+                this.#updatePropertyEditorValue();
 
+            })
+            .catch(() => {
+                return false;
+            })
+
+    }
 
     /**
      * Open Modal (Poll Picker)

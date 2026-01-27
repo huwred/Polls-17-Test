@@ -49,6 +49,7 @@ const menuManifest: UmbExtensionManifest = {
         entityType: POLL_TREE_ITEM_ENTITY_TYPE,
     }
 };
+
 const sidebarAppManifest: UmbExtensionManifest = {
     type: "sectionSidebarApp",
     kind: "menu",
@@ -92,6 +93,5 @@ export const manifests: Array<UmbExtensionManifest> = [
     treeItem,
     menuManifest,
     menuitemManifest,
-
 
 ];
